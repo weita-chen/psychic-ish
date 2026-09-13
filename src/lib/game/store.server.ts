@@ -1,4 +1,4 @@
-import { getSql } from "@/lib/db";
+import { DatabaseUnavailableError, getSql } from "@/lib/db";
 import { COPY } from "./copy";
 import {
   createEmptyRoom,
@@ -153,7 +153,8 @@ export async function mutateRoom(
   const code = parseRoomCode(roomCode);
   if (!code) return err("bad_code", COPY.invalidCode);
 
-  return withLock(code, async () => {
+  try {
+    return await withLock(code, async () => {
     for (let attempt = 0; attempt < 8; attempt += 1) {
       const row = await loadRow(code);
       if (!row) return err("not_found", COPY.roomNotFound);
@@ -193,7 +194,10 @@ export async function mutateRoom(
       return { ok: true, view: toClientView(state, playerId, Date.now()) };
     }
     return err("conflict", COPY.network);
-  });
+    });
+  } catch (e) {
+    return asActionError(e);
+  }
 }
 
 export async function readRoom(roomCode: string, token: string): Promise<ActionResult> {
@@ -202,35 +206,42 @@ export async function readRoom(roomCode: string, token: string): Promise<ActionR
   });
 }
 
+function asActionError(e: unknown): ActionResult {
+  if (e instanceof GameError) return err(e.code, e.message);
+  if (e instanceof DatabaseUnavailableError) return err("db", COPY.noDatabase);
+  console.error("[rooms]", e);
+  return err("network", COPY.network);
+}
+
 export async function createRoomRecord(input: {
   nickname: string;
   characterId: string;
 }): Promise<ActionResult> {
-  const nickname = sanitizeNickname(input.nickname);
-  if (!nickname) return err("empty_nick", COPY.emptyNickname);
-  const characterId = parseCharacter(input.characterId);
-  const playerId = newPlayerId();
-  const token = newToken();
-  const player = makePlayer({
-    playerId,
-    nickname,
-    characterId,
-    colorIndex: 0,
-  });
-  const code = await generateUniqueCode();
-  const state = createEmptyRoom(code, player);
-  const tokens = { [token]: playerId };
   try {
+    const nickname = sanitizeNickname(input.nickname);
+    if (!nickname) return err("empty_nick", COPY.emptyNickname);
+    const characterId = parseCharacter(input.characterId);
+    const playerId = newPlayerId();
+    const token = newToken();
+    const player = makePlayer({
+      playerId,
+      nickname,
+      characterId,
+      colorIndex: 0,
+    });
+    const code = await generateUniqueCode();
+    const state = createEmptyRoom(code, player);
+    const tokens = { [token]: playerId };
     await insertRoom(state, tokens);
-  } catch {
-    return err("code", "開壇失敗，再試一次。");
+    return {
+      ok: true,
+      view: toClientView(state, playerId, Date.now()),
+      token,
+      playerId,
+    };
+  } catch (e) {
+    return asActionError(e);
   }
-  return {
-    ok: true,
-    view: toClientView(state, playerId, Date.now()),
-    token,
-    playerId,
-  };
 }
 
 export async function joinRoomRecord(input: {
@@ -244,7 +255,8 @@ export async function joinRoomRecord(input: {
   if (!nickname) return err("empty_nick", COPY.emptyNickname);
   const characterId = parseCharacter(input.characterId) as CharacterId;
 
-  return withLock(code, async () => {
+  try {
+    return await withLock(code, async () => {
     for (let attempt = 0; attempt < 6; attempt += 1) {
       const row = await loadRow(code);
       if (!row) return err("not_found", COPY.roomNotFound);
@@ -281,7 +293,8 @@ export async function joinRoomRecord(input: {
       };
     }
     return err("conflict", COPY.network);
-  });
+    });
+  } catch (e) {
+    return asActionError(e);
+  }
 }
-
-export { parseRoomCode };

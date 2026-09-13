@@ -14,4 +14,12 @@
 
 ## 線上測試
 
-這是有伺服器的網頁遊戲，**GitHub 頁面本身不能開房間**。要跨裝置多人連線，需要部署到 Vercel（或同類平台），並設定 Postgres 的 `DATABASE_URL`（Neon 即可）。沒有資料庫的話，房間狀態無法在不同手機／電腦之間共用。
+這是有伺服器的網頁遊戲，**GitHub 頁面本身不能開房間**。要跨裝置多人連線，需要部署到 Vercel，並接上 Postgres。
+
+Vercel Storage 建議這樣接：
+
+1. 打開 Vercel 專案 → **Storage** → **Create Database** → 選 **Neon**（或 Postgres）
+2. 把資料庫連到這個專案（會自動寫入 `DATABASE_URL` 或 `POSTGRES_URL`）
+3. **Redeploy** 一次
+
+沒有資料庫的話，房間狀態無法在不同手機／電腦之間共用，開壇也會失敗。

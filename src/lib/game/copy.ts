@@ -37,6 +37,7 @@ export const COPY = {
   connecting: "連線中",
   playerLeft: "這位通靈者先離席了。",
   network: "訊號不穩，稍後再試。",
+  noDatabase: "線上伺服器還沒接上資料庫，暫時無法開房。",
   nicknamePlaceholder: "你的暱稱",
   cluePlaceholder: "用一個提示點出位置……",
   codePlaceholder: "四位壇號",
