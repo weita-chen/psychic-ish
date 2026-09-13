@@ -81,12 +81,12 @@ export const moveNeedle = createServerFn({ method: "POST" })
   });
 
 export const markReady = createServerFn({ method: "POST" })
-  .validator(z.object(tokenFields))
+  .validator(z.object({ ...tokenFields, position: z.number().optional() }))
   .handler(async ({ data }): Promise<ActionResult> => {
     const { mutateRoom } = await import("./store.server");
     const { markReady: apply } = await import("./engine.server");
     return mutateRoom(data.roomCode, { token: data.token }, ({ state, playerId, now }) => {
-      apply(state, playerId, now);
+      apply(state, playerId, now, data.position);
     });
   });
 

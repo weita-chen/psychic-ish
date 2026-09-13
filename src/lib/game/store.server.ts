@@ -191,7 +191,7 @@ export async function mutateRoom(
 
       const saved = await saveRoom(state, tokens, row.version, opts.touchActivity !== false);
       if (!saved) continue;
-      return { ok: true, view: toClientView(state, playerId, Date.now()) };
+      return { ok: true, view: toClientView(state, playerId, Date.now(), row.version + 1) };
     }
     return err("conflict", COPY.network);
     });
@@ -201,9 +201,51 @@ export async function mutateRoom(
 }
 
 export async function readRoom(roomCode: string, token: string): Promise<ActionResult> {
-  return mutateRoom(roomCode, { token, touchActivity: true }, () => {
-    /* tick + touch already applied */
-  });
+  const code = parseRoomCode(roomCode);
+  if (!code) return err("bad_code", COPY.invalidCode);
+  try {
+    const row = await loadRow(code);
+    if (!row) return err("not_found", COPY.roomNotFound);
+    const now = Date.now();
+    const state = parseState(row.state);
+    const tokens = parseTokens(row.tokens);
+    if (isExpired(state, now)) {
+      await deleteRoom(code);
+      return err("expired", COPY.roomExpired);
+    }
+    const playerId = tokens[token];
+    if (!playerId) return err("auth", COPY.leftRemoved);
+    const player = state.players.find((p) => p.playerId === playerId);
+    if (!player) return err("auth", COPY.leftRemoved);
+    if (player.status === "left") return err("left", COPY.leftRemoved);
+
+    const before = roomFingerprint(state);
+    tick(state, now);
+    const ticked = roomFingerprint(state) !== before;
+    const heartbeatDue = now - player.lastSeen >= 4_000;
+
+    if (ticked || heartbeatDue) {
+      return mutateRoom(roomCode, { token, touchActivity: true }, () => {
+        /* persist tick / lastSeen */
+      });
+    }
+    return { ok: true, view: toClientView(state, playerId, now, row.version) };
+  } catch (e) {
+    return asActionError(e);
+  }
+}
+
+function roomFingerprint(state: RoomState): string {
+  const turn = state.currentTurn;
+  return [
+    state.phase,
+    turn?.revealed ? "1" : "0",
+    turn?.revealCountdownEndsAt ?? "",
+    state.interstitialEndsAt ?? "",
+    turn?.readyPlayerIds.join(",") ?? "",
+    state.closedReason ?? "",
+    state.players.map((p) => `${p.playerId}:${p.status}:${p.connected ? 1 : 0}`).join(";"),
+  ].join("|");
 }
 
 function asActionError(e: unknown): ActionResult {
@@ -235,7 +277,7 @@ export async function createRoomRecord(input: {
     await insertRoom(state, tokens);
     return {
       ok: true,
-      view: toClientView(state, playerId, Date.now()),
+      view: toClientView(state, playerId, Date.now(), 0),
       token,
       playerId,
     };
@@ -287,7 +329,7 @@ export async function joinRoomRecord(input: {
       if (!saved) continue;
       return {
         ok: true,
-        view: toClientView(state, playerId, Date.now()),
+        view: toClientView(state, playerId, Date.now(), row.version + 1),
         token,
         playerId,
       };

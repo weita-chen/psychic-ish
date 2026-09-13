@@ -43,11 +43,13 @@ export function Spectrum({
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+  const ignoreProp = useRef(false);
   const [local, setLocal] = useState(needle ?? 0.5);
   const labelId = useId();
 
   useEffect(() => {
-    if (!dragging.current && needle != null) setLocal(needle);
+    if (dragging.current || ignoreProp.current) return;
+    if (needle != null) setLocal(needle);
   }, [needle]);
 
   const commit = useCallback(
@@ -72,6 +74,10 @@ export function Spectrum({
 
   const endDrag = () => {
     dragging.current = false;
+    ignoreProp.current = true;
+    window.setTimeout(() => {
+      ignoreProp.current = false;
+    }, 500);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

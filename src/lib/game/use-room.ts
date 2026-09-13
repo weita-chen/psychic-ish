@@ -24,6 +24,12 @@ declare global {
   }
 }
 
+function pollDelay(phase: ClientView["phase"] | undefined): number {
+  if (phase === "guessing" || phase === "revealCountdown" || phase === "interstitial") return 400;
+  if (phase === "awaitClue" || phase === "reveal") return 500;
+  return 900;
+}
+
 export function useRoom(session: Session | null) {
   const [view, setView] = useState<ClientView | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,11 +38,29 @@ export function useRoom(session: Session | null) {
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const prevViewRef = useRef<ClientView | null>(null);
-  const needleTimer = useRef(0);
+  const lastVersion = useRef(-1);
+  const dirtyNeedle = useRef<number | null>(null);
   const pendingNeedle = useRef<number | null>(null);
+  const needleTimer = useRef(0);
+  const pollInflight = useRef(false);
+  const pollFails = useRef(0);
 
   const apply = useCallback((result: ActionResult) => {
     if (result.ok) {
+      if (result.view.version < lastVersion.current) return true;
+      lastVersion.current = result.view.version;
+
+      if (dirtyNeedle.current != null && result.view.phase === "guessing") {
+        const server = result.view.yourNeedle;
+        if (server != null && Math.abs(server - dirtyNeedle.current) < 0.004) {
+          dirtyNeedle.current = null;
+        } else {
+          result.view.yourNeedle = dirtyNeedle.current;
+        }
+      } else if (result.view.phase !== "guessing") {
+        dirtyNeedle.current = null;
+      }
+
       const prev = prevViewRef.current;
       if (prev) {
         const wasPresent = new Set(
@@ -76,29 +100,37 @@ export function useRoom(session: Session | null) {
 
   const poll = useCallback(async () => {
     const s = sessionRef.current;
-    if (!s) return;
+    if (!s || pollInflight.current) return;
+    pollInflight.current = true;
     try {
       const result = await getRoom({ data: { roomCode: s.roomCode, token: s.token } });
+      pollFails.current = 0;
       apply(result);
     } catch {
-      setError(COPY.network);
+      pollFails.current += 1;
+      if (pollFails.current >= 3) setError(COPY.network);
+    } finally {
+      pollInflight.current = false;
     }
   }, [apply]);
 
   useEffect(() => {
     if (!session) return;
-    void poll();
-    // Keep heartbeats even when the tab is hidden so switching to Discord /
-    // a phone call does not look like a disconnect.
-    const id = window.setInterval(() => {
-      void poll();
-    }, 800);
+    let stopped = false;
+    let timer = 0;
+    const loop = async () => {
+      await poll();
+      if (stopped) return;
+      timer = window.setTimeout(loop, pollDelay(prevViewRef.current?.phase));
+    };
+    void loop();
     const onVis = () => {
       if (document.visibilityState === "visible") void poll();
     };
     document.addEventListener("visibilitychange", onVis);
     return () => {
-      window.clearInterval(id);
+      stopped = true;
+      window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [session?.token, session?.roomCode, poll]);
@@ -160,16 +192,30 @@ export function useRoom(session: Session | null) {
     clue: (text: string) =>
       s && run(() => submitClue({ data: { roomCode: s.roomCode, token: s.token, clue: text } })),
     needle: (position: number) => {
+      dirtyNeedle.current = position;
       pendingNeedle.current = position;
       if (needleTimer.current) return;
       needleTimer.current = window.setTimeout(() => {
         needleTimer.current = 0;
         void flushNeedle();
-      }, 90);
+      }, 800);
     },
     ready: async () => {
-      await flushNeedle();
-      return s && run(() => markReady({ data: { roomCode: s.roomCode, token: s.token } }));
+      const pos = pendingNeedle.current ?? dirtyNeedle.current ?? undefined;
+      pendingNeedle.current = null;
+      if (needleTimer.current) {
+        window.clearTimeout(needleTimer.current);
+        needleTimer.current = 0;
+      }
+      setView((cur) => (cur ? { ...cur, yourReady: true } : cur));
+      return (
+        s &&
+        run(() =>
+          markReady({
+            data: { roomCode: s.roomCode, token: s.token, position: pos },
+          }),
+        )
+      );
     },
     continueDuo: () =>
       s && run(() => continueDuo({ data: { roomCode: s.roomCode, token: s.token } })),

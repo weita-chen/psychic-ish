@@ -440,7 +440,17 @@ export function updateNeedle(
   state.currentTurn.needlePositions[actorId] = clamp01(position);
 }
 
-export function markReady(state: RoomState, actorId: string, now: number): void {
+export function markReady(
+  state: RoomState,
+  actorId: string,
+  now: number,
+  position?: number,
+): void {
+  if (state.phase === "guessing" && state.currentTurn && actorId !== state.currentTurn.devoteeId) {
+    if (typeof position === "number" && !state.currentTurn.readyPlayerIds.includes(actorId)) {
+      state.currentTurn.needlePositions[actorId] = clamp01(position);
+    }
+  }
   if (state.phase !== "guessing" || !state.currentTurn) {
     if (
       state.currentTurn?.readyPlayerIds.includes(actorId) &&
@@ -599,7 +609,12 @@ function titlesFor(state: RoomState, now: number): ClientView["titles"] {
   };
 }
 
-export function toClientView(state: RoomState, viewerId: string, now: number): ClientView {
+export function toClientView(
+  state: RoomState,
+  viewerId: string,
+  now: number,
+  version = 0,
+): ClientView {
   const turn = state.currentTurn;
   const you = state.players.find((p) => p.playerId === viewerId);
   const isDevotee = Boolean(turn && you && turn.devoteeId === you.playerId);
@@ -698,6 +713,7 @@ export function toClientView(state: RoomState, viewerId: string, now: number): C
     titles: titlesFor(state, now),
     closedReason: state.closedReason,
     nudgeAt: state.nudge?.at ?? null,
+    version,
   };
 }
 

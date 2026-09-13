@@ -145,6 +145,7 @@ export type ClientView = {
   titles: { masterId: string; fraudId: string } | null;
   closedReason: string | null;
   nudgeAt: number | null;
+  version: number;
 };
 
 export type ActionOk = {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CharacterPicker } from "./character-avatar";
 import { PlayerRoster } from "./player-roster";
@@ -499,13 +499,17 @@ function ClueBanner({ clue }: { clue: string | null }) {
 }
 
 function useCountdown(endsAt: number | null, serverNow: number): number | null {
-  const offset = useMemo(() => Date.now() - serverNow, [serverNow]);
+  const origin = useRef<{ ends: number; offset: number } | null>(null);
+  if (endsAt != null && origin.current?.ends !== endsAt) {
+    origin.current = { ends: endsAt, offset: Date.now() - serverNow };
+  }
+  if (endsAt == null) origin.current = null;
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     if (endsAt == null) return;
     const id = window.setInterval(() => setNow(Date.now()), 200);
     return () => window.clearInterval(id);
   }, [endsAt]);
-  if (endsAt == null) return null;
-  return Math.max(0, Math.ceil((endsAt - (now - offset)) / 1000));
+  if (endsAt == null || !origin.current) return null;
+  return Math.max(0, Math.ceil((endsAt - (now - origin.current.offset)) / 1000));
 }
