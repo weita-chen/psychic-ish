@@ -224,7 +224,10 @@ function BandScoreMarks({ targetCenter }: { targetCenter: number }) {
   let inner = 0;
   for (const band of SCORE_BANDS) {
     if (band.points === 3) {
-      marks.push({ points: 3, t: targetCenter });
+      marks.push({
+        points: 3,
+        t: Math.min(0.96, Math.max(0.04, targetCenter)),
+      });
     } else {
       const mid = (inner + band.halfWidth) / 2;
       const right = targetCenter + mid;

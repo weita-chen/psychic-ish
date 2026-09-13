@@ -173,5 +173,5 @@ export const MIN_PLAYERS = 2;
 export const MAX_CLUE_LEN = 40;
 export const MAX_NICKNAME_LEN = 12;
 export const DEFAULT_NEEDLE = 0.5;
-export const TARGET_MIN = 0.2;
-export const TARGET_MAX = 0.8;
+export const TARGET_MIN = 0;
+export const TARGET_MAX = 1;

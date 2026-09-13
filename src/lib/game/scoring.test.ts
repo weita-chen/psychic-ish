@@ -23,20 +23,25 @@ test("scoreNeedle is symmetric around the target", () => {
   assert.equal(scoreNeedle(t + 0.2, t), 1);
 });
 
-test("randomTargetCenter stays in legal range so 1-point band never clips", () => {
+test("randomTargetCenter can land anywhere on the bar", () => {
   let min = 1;
   let max = 0;
-  for (let i = 0; i < 400; i += 1) {
+  for (let i = 0; i < 800; i += 1) {
     const c = randomTargetCenter();
     min = Math.min(min, c);
     max = Math.max(max, c);
     assert.ok(c >= TARGET_MIN, `low ${c}`);
     assert.ok(c <= TARGET_MAX, `high ${c}`);
-    assert.ok(c - 0.2 >= -1e-12);
-    assert.ok(c + 0.2 <= 1 + 1e-12);
   }
-  assert.ok(min < 0.35, "should sometimes draw near the left legal edge");
-  assert.ok(max > 0.65, "should sometimes draw near the right legal edge");
+  assert.ok(min < 0.08, "should sometimes draw near the left edge");
+  assert.ok(max > 0.92, "should sometimes draw near the right edge");
+});
+
+test("scoreNeedle still awards bullseye at the bar edge", () => {
+  assert.equal(scoreNeedle(0, 0), 3);
+  assert.equal(scoreNeedle(1, 1), 3);
+  assert.equal(scoreNeedle(0.05, 0), 2);
+  assert.equal(scoreNeedle(0.25, 0), 0);
 });
 
 test("clamp01", () => {

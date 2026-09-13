@@ -70,7 +70,7 @@ export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => v
               {COPY.master}，最低分是{COPY.lastPlace}。
             </li>
             <li>
-              <strong>2 人：</strong>信眾該局 0 分，只有通靈者得分。輪流一直玩，直到有人按「
+              <strong>2 人：</strong>通靈者照常得分。若這題通靈者有得分，信眾也得 1 分；沒人得分則信眾 0 分。輪流一直玩，直到有人按「
               {COPY.settleDuo}」。
             </li>
           </ul>

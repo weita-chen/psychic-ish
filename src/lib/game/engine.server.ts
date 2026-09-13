@@ -364,15 +364,11 @@ function performReveal(state: RoomState, now: number): void {
     sumPos += pos;
     count += 1;
   }
-  const devoteeScore =
-    state.mode === "party" ? Object.values(scores).reduce((a, b) => a + b, 0) : 0;
-  if (state.mode === "party") {
-    const devotee = state.players.find((p) => p.playerId === turn.devoteeId);
-    if (devotee && isActive(devotee, now)) devotee.totalScore += devoteeScore;
-    scores[turn.devoteeId] = devoteeScore;
-  } else {
-    scores[turn.devoteeId] = 0;
-  }
+  const channelerSum = Object.values(scores).reduce((a, b) => a + b, 0);
+  const devoteeScore = state.mode === "party" ? channelerSum : channelerSum > 0 ? 1 : 0;
+  const devotee = state.players.find((p) => p.playerId === turn.devoteeId);
+  if (devotee && isActive(devotee, now)) devotee.totalScore += devoteeScore;
+  scores[turn.devoteeId] = devoteeScore;
   turn.turnScores = scores;
   turn.averagePosition = count > 0 ? sumPos / count : null;
   state.phase = "reveal";
