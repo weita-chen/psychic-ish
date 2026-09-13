@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -5,6 +6,20 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "通靈少根筋";
+
+const STALE_SHELL_RECOVERY = `(function(){var k='psi-stale';function bump(){try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.reload()}addEventListener('pageshow',function(e){if(e.persisted)location.reload()});addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT')bump()},true);setTimeout(function(){if(!document.documentElement.getAttribute('data-hydrated'))bump()},3500)})();`;
+
+function MarkHydrated() {
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = "1";
+    try {
+      sessionStorage.removeItem("psi-stale");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+  return null;
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -30,12 +45,7 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&display=swap",
       },
     ],
-    scripts: [
-      {
-        children:
-          "addEventListener('pageshow',function(e){if(e.persisted)location.reload()})",
-      },
-    ],
+    scripts: [{ children: STALE_SHELL_RECOVERY }],
   }),
   component: () => (
     <html lang="zh-Hant" className="antialiased" suppressHydrationWarning>
@@ -43,6 +53,7 @@ export const Route = createRootRoute({
         <HeadContent />
       </head>
       <body className="paper-grid min-h-dvh">
+        <MarkHydrated />
         <PreviewHostBridge />
         <AuthProvider>
           <Outlet />
