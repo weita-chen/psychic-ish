@@ -8,7 +8,6 @@ import { X } from "lucide-react";
 
 const DEMO_TARGET = 0.77;
 const DEMO_CLUE = "去超商買飲料時雨傘被幹走了";
-const EXAMPLE_TARGET = 0.62;
 
 export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [needle, setNeedle] = useState(0.5);
@@ -56,7 +55,7 @@ export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => v
               leftLabel="完全沒生氣"
               rightLabel="氣到不行"
               interactive={false}
-              targetCenter={showExampleTarget ? EXAMPLE_TARGET : null}
+              targetCenter={showExampleTarget ? DEMO_TARGET : null}
               showBands={showExampleTarget}
             />
           </div>
@@ -70,8 +69,8 @@ export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => v
               {COPY.master}，最低分是{COPY.lastPlace}。
             </li>
             <li>
-              <strong>2 人：</strong>通靈者照常得分。若這題通靈者有得分，信眾也得 1 分；沒人得分則信眾 0 分。輪流一直玩，直到有人按「
-              {COPY.settleDuo}」。
+              <strong>2 人：</strong>兩人輪流當信眾，規則同上。若這題通靈者有得分，信眾也得 1 分；沒人得分則信眾 0 分。遊戲直到有人按「
+              {COPY.settleDuo}」才結束。
             </li>
           </ul>
           <p className="text-sm text-muted">信眾出的線索盡量不要有數字</p>
