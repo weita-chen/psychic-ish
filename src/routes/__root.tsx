@@ -30,6 +30,12 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        children:
+          "addEventListener('pageshow',function(e){if(e.persisted)location.reload()})",
+      },
+    ],
   }),
   component: () => (
     <html lang="zh-Hant" className="antialiased" suppressHydrationWarning>
