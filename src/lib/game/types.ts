@@ -101,6 +101,7 @@ export type RoomState = {
   nudge: { fromId: string; at: number } | null;
   createdAt: number;
   roundHistory: TurnRecap[];
+  deckIds: string[];
 };
 
 export type PublicPlayer = {
@@ -173,6 +174,7 @@ export type ClientView = {
   canSettleDuo: boolean;
   titles: RoundTitles | null;
   roundHistory: TurnRecap[];
+  deckIds: string[];
   closedReason: string | null;
   nudgeAt: number | null;
   version: number;

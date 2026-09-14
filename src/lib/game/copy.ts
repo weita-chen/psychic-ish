@@ -69,4 +69,6 @@ export const COPY = {
   roomClosed: "這一壇已經關了。",
   hostGoneNoReplay: "壇主已經離席，沒辦法再問一輪。",
   tooFewLeft: "剩下的人太少，這一壇先散了。",
+  deckPicker: "本次問事牌組",
+  deckNeedOne: "至少勾一個牌組。",
 } as const;

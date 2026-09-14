@@ -1,5 +1,6 @@
 import { DatabaseUnavailableError, getSql } from "@/lib/db";
 import { COPY } from "./copy";
+import { parseDeckIds } from "./decks";
 import {
   createEmptyRoom,
   err,
@@ -51,6 +52,7 @@ async function withLock<T>(key: string, fn: () => Promise<T>): Promise<T> {
 function parseState(raw: RoomState | string): RoomState {
   const state = (typeof raw === "string" ? JSON.parse(raw) : raw) as RoomState;
   if (!Array.isArray(state.roundHistory)) state.roundHistory = [];
+  if (!Array.isArray(state.deckIds) || state.deckIds.length === 0) state.deckIds = ["a"];
   for (const p of state.players) {
     if (typeof p.devoteeRoundScore !== "number") p.devoteeRoundScore = 0;
   }
@@ -262,11 +264,14 @@ function asActionError(e: unknown): ActionResult {
 export async function createRoomRecord(input: {
   nickname: string;
   characterId: string;
+  deckIds?: string[];
 }): Promise<ActionResult> {
   try {
     const nickname = sanitizeNickname(input.nickname);
     if (!nickname) return err("empty_nick", COPY.emptyNickname);
     const characterId = parseCharacter(input.characterId);
+    const deckIds = parseDeckIds(input.deckIds);
+    if (deckIds.length === 0) return err("deck", COPY.deckNeedOne);
     const playerId = newPlayerId();
     const token = newToken();
     const player = makePlayer({
@@ -276,7 +281,7 @@ export async function createRoomRecord(input: {
       colorIndex: 0,
     });
     const code = await generateUniqueCode();
-    const state = createEmptyRoom(code, player);
+    const state = createEmptyRoom(code, player, deckIds);
     const tokens = { [token]: playerId };
     await insertRoom(state, tokens);
     return {

@@ -1,6 +1,6 @@
-import deckFile from "../../data/spectrum-cards.json";
 import { COPY } from "./copy";
 import { isCharacterId } from "./characters";
+import { ALL_CARDS, enabledCardIdsFor, parseDeckIds } from "./decks";
 import { clamp01, randomTargetCenter, scoreNeedle } from "./scoring";
 import {
   DEFAULT_NEEDLE,
@@ -37,16 +37,15 @@ export function err(code: string, error: string): ActionErr {
   return { ok: false, code, error };
 }
 
-const ALL_CARDS = (deckFile as { cards: SpectrumCard[] }).cards;
-const ENABLED_CARDS = ALL_CARDS.filter((c) => c.enabled && !c.nsfw);
 const CARD_BY_ID = new Map(ALL_CARDS.map((c) => [c.id, c]));
+const ENABLED_CARDS = ALL_CARDS.filter((c) => c.enabled && !c.nsfw);
 
 export function getCard(id: string): SpectrumCard | undefined {
   return CARD_BY_ID.get(id);
 }
 
-export function enabledCardIds(): string[] {
-  return ENABLED_CARDS.map((c) => c.id);
+export function enabledCardIds(deckIds?: readonly string[]): string[] {
+  return enabledCardIdsFor(deckIds && deckIds.length ? deckIds : ["a", "b"]);
 }
 
 function nowMs(): number {
@@ -85,14 +84,14 @@ function pickWeighted(ids: string[]): string {
   return cards[cards.length - 1]!.id;
 }
 
-function reshuffle(_avoidId: string | null): string[] {
-  return enabledCardIds();
+function reshuffle(state: RoomState): string[] {
+  return enabledCardIds(state.deckIds);
 }
 
 function drawCard(state: RoomState): string {
   let bag = state.remainingCardIds.filter((id) => CARD_BY_ID.get(id)?.enabled);
   if (bag.length === 0) {
-    bag = reshuffle(state.lastDrawnCardId);
+    bag = reshuffle(state);
   }
   let id = pickWeighted(bag);
   if (bag.length > 1 && id === state.lastDrawnCardId) {
@@ -116,8 +115,9 @@ export function isActive(p: Player, now: number): boolean {
   return true;
 }
 
-export function createEmptyRoom(roomCode: string, host: Player): RoomState {
+export function createEmptyRoom(roomCode: string, host: Player, deckIds: string[]): RoomState {
   const now = nowMs();
+  const decks = parseDeckIds(deckIds);
   return {
     roomCode,
     hostPlayerId: host.playerId,
@@ -126,7 +126,7 @@ export function createEmptyRoom(roomCode: string, host: Player): RoomState {
     mode: null,
     roundNumber: 0,
     turnNumber: 0,
-    remainingCardIds: enabledCardIds(),
+    remainingCardIds: enabledCardIds(decks),
     lastDrawnCardId: null,
     currentTurn: null,
     lastActivityAt: now,
@@ -135,6 +135,7 @@ export function createEmptyRoom(roomCode: string, host: Player): RoomState {
     nudge: null,
     createdAt: now,
     roundHistory: [],
+    deckIds: decks,
   };
 }
 
@@ -310,7 +311,7 @@ function resetRoundFlags(state: RoomState): void {
   }
   state.roundNumber += 1;
   state.turnNumber = 0;
-  state.remainingCardIds = enabledCardIds();
+  state.remainingCardIds = enabledCardIds(state.deckIds);
   state.roundHistory = [];
 }
 
@@ -747,6 +748,7 @@ export function toClientView(
     canSettleDuo: state.phase === "reveal" && state.mode === "duo",
     titles: titlesFor(state, now),
     roundHistory: state.phase === "roundResults" ? (state.roundHistory ?? []) : [],
+    deckIds: state.deckIds ?? ["a"],
     closedReason: state.closedReason,
     nudgeAt: state.nudge?.at ?? null,
     version,

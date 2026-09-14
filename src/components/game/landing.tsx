@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createRoom, joinRoom } from "@/lib/game/actions";
 import { COPY } from "@/lib/game/copy";
+import { DECK_IDS, DECKS, type DeckId } from "@/lib/game/decks";
 import type { CharacterId } from "@/lib/game/types";
 import { loadProfile, saveProfile, saveSession } from "@/lib/session";
 import { isCharacterId } from "@/lib/game/characters";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 export function Landing() {
   const navigate = useNavigate();
@@ -16,6 +19,7 @@ export function Landing() {
   const [nickname, setNickname] = useState("");
   const [characterId, setCharacterId] = useState<CharacterId>("few_screws_loose");
   const [code, setCode] = useState("");
+  const [deckIds, setDeckIds] = useState<DeckId[]>([...DECK_IDS]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -28,11 +32,15 @@ export function Landing() {
   const persist = () => saveProfile({ nickname, characterId });
 
   const onCreate = async () => {
+    if (deckIds.length < 1) {
+      setError(COPY.deckNeedOne);
+      return;
+    }
     persist();
     setBusy(true);
     setError(null);
     try {
-      const result = await createRoom({ data: { nickname, characterId } });
+      const result = await createRoom({ data: { nickname, characterId, deckIds } });
       if (!result.ok) {
         setError(result.error);
         return;
@@ -170,6 +178,14 @@ export function Landing() {
             <CharacterPicker value={characterId} onChange={setCharacterId} />
           </div>
 
+          {mode === "create" && (
+            <div>
+              <span className="mb-2 block text-sm font-medium">{COPY.deckPicker}</span>
+              <p className="mb-2 text-xs text-muted">可複選，至少勾一個。預設全開。</p>
+              <DeckPicker value={deckIds} onChange={setDeckIds} />
+            </div>
+          )}
+
           {error && <p className="text-sm text-primary">{error}</p>}
 
           <Button type="submit" size="lg" className="mt-auto w-full" disabled={busy}>
@@ -178,6 +194,52 @@ export function Landing() {
         </form>
       )}
     </main>
+  );
+}
+
+function DeckPicker({
+  value,
+  onChange,
+}: {
+  value: DeckId[];
+  onChange: (ids: DeckId[]) => void;
+}) {
+  const toggle = (id: DeckId) => {
+    if (value.includes(id)) {
+      if (value.length === 1) return;
+      onChange(value.filter((x) => x !== id));
+    } else {
+      onChange([...value, id]);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      {DECKS.map((d) => {
+        const on = value.includes(d.id);
+        return (
+          <button
+            key={d.id}
+            type="button"
+            onClick={() => toggle(d.id)}
+            aria-pressed={on}
+            className={cn(
+              "flex h-12 items-center justify-between rounded-[14px] bg-surface px-4 text-left text-sm shadow-[0_0_0_1px_rgba(42,24,16,0.08)]",
+              on && "shadow-[0_0_0_2px_rgba(177,50,34,0.55)]",
+            )}
+          >
+            <span className="font-medium">{d.label}</span>
+            <span
+              className={cn(
+                "flex size-6 items-center justify-center rounded-full",
+                on ? "bg-primary text-primary-fg" : "bg-surface-2 text-faint",
+              )}
+            >
+              <Check className="size-3.5" strokeWidth={2.4} />
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

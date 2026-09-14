@@ -7,6 +7,7 @@ import { Spectrum } from "./spectrum";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { COPY } from "@/lib/game/copy";
+import { deckLabels } from "@/lib/game/decks";
 import { isCharacterId } from "@/lib/game/characters";
 import type { CharacterId, ClientView, TurnRecap } from "@/lib/game/types";
 import { MAX_CLUE_LEN } from "@/lib/game/types";
@@ -247,6 +248,9 @@ function Lobby({ view, room }: { view: ClientView; room: RoomApi }) {
           {view.roomCode}
         </p>
         <p className="mt-3 text-center text-sm text-muted">{COPY.shareHint}</p>
+        {view.deckIds?.length > 0 && (
+          <p className="mt-2 text-center text-xs text-faint">{deckLabels(view.deckIds)}</p>
+        )}
       </div>
 
       <PlayerRoster players={view.players} showScores={false} />

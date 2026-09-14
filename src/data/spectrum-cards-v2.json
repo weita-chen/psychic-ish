@@ -1,0 +1,885 @@
+{
+  "version": "2.0.0",
+  "localeDefault": "zh-Hant",
+  "notes": "v2.0: Traditional Chinese poles in the edited draft are the source of truth. Metadata, IDs, English, tags, and sample clues were checked against those poles. All cards are nsfw false, enabled true; weight 1.2 is reserved for Taiwanese / temple / signature-comedy cards.",
+  "cards": [
+    {
+      "id": "temple_accuracy",
+      "leftZh": "貌似很靈驗",
+      "rightZh": "一臉就在騙",
+      "leftEn": "Seems eerily accurate",
+      "rightEn": "Looks like an obvious scam",
+      "tags": [
+        "taiwan",
+        "temple",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "大甲鎮瀾宮",
+        "巷口土地公",
+        "夜市算命攤"
+      ]
+    },
+    {
+      "id": "devout_disrespectful",
+      "leftZh": "極度虔誠",
+      "rightZh": "超級不敬",
+      "leftEn": "Extremely devout",
+      "rightEn": "Extremely disrespectful",
+      "tags": [
+        "taiwan",
+        "temple",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "每天早課",
+        "考試前抱佛腳",
+        "路過順手插香"
+      ]
+    },
+    {
+      "id": "temple_crowded_empty",
+      "leftZh": "香火鼎盛的地方",
+      "rightZh": "門可羅雀的地方",
+      "leftEn": "A bustling, incense-filled place",
+      "rightEn": "A deserted place",
+      "tags": [
+        "taiwan",
+        "temple",
+        "place"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "大甲媽祖",
+        "行天宮",
+        "社區土地公廟"
+      ]
+    },
+    {
+      "id": "fate_vs_effort",
+      "leftZh": "全靠命的事",
+      "rightZh": "努力就有用",
+      "leftEn": "Something determined entirely by luck",
+      "rightEn": "Something where effort actually pays off",
+      "tags": [
+        "life",
+        "abstract",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "對發票",
+        "聯考分數",
+        "抽籤決定晚餐"
+      ]
+    },
+    {
+      "id": "superstition_science",
+      "leftZh": "迷信",
+      "rightZh": "科學",
+      "leftEn": "Superstition",
+      "rightEn": "Science",
+      "tags": [
+        "taiwan",
+        "abstract",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "出門看農曆",
+        "路沖要擋",
+        "量體溫再決定要不要請假"
+      ]
+    },
+    {
+      "id": "blessed_jinxed",
+      "leftZh": "被保佑的一天",
+      "rightZh": "被作弄的一天",
+      "leftEn": "A day that feels blessed",
+      "rightEn": "A day that feels cursed",
+      "tags": [
+        "taiwan",
+        "luck",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "綠燈一路過",
+        "差一號中獎",
+        "沒帶傘剛好放晴"
+      ]
+    },
+    {
+      "id": "southern_northern",
+      "leftZh": "很南部",
+      "rightZh": "很北部",
+      "leftEn": "Very southern Taiwanese",
+      "rightEn": "Very northern Taiwanese",
+      "tags": [
+        "taiwan",
+        "culture",
+        "regional"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "小籠包",
+        "鴨肉冬粉",
+        "下午茶時間",
+        "加辣的量"
+      ]
+    },
+    {
+      "id": "pig_teammate_great_teammate",
+      "leftZh": "豬隊友會做",
+      "rightZh": "神隊友會做",
+      "leftEn": "Something a terrible teammate would do",
+      "rightEn": "Something a great teammate would do",
+      "tags": [
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "報名卻放鳥",
+        "主動收盤子",
+        "關鍵時刻幫忙補位"
+      ]
+    },
+    {
+      "id": "blatant_lie_believable",
+      "leftZh": "一聽就知道在唬爛",
+      "rightZh": "合理到完全相信",
+      "leftEn": "Obviously made up",
+      "rightEn": "Completely believable",
+      "tags": [
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "我在路上",
+        "手機剛好沒電",
+        "今天真的塞車"
+      ]
+    },
+    {
+      "id": "nothing_to_argue_three_day_argument",
+      "leftZh": "完全沒什麼好吵的話題",
+      "rightZh": "可以吵三天三夜",
+      "leftEn": "A topic with nothing to argue about",
+      "rightEn": "A topic people could argue about for three days",
+      "tags": [
+        "social",
+        "internet",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "鹹豆漿甜豆漿",
+        "早餐到底算不算午餐",
+        "珍珠到底算不算喝的"
+      ]
+    },
+    {
+      "id": "ac_required_fan_enough",
+      "leftZh": "沒冷氣會死的地方",
+      "rightZh": "電風扇就夠",
+      "leftEn": "A place where you need air conditioning",
+      "rightEn": "A place where a fan is enough",
+      "tags": [
+        "taiwan",
+        "weather",
+        "daily",
+        "place"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "七月捷運車廂",
+        "合歡山晚上",
+        "頂樓加蓋套房"
+      ]
+    },
+    {
+      "id": "early_arrival_lateness",
+      "leftZh": "該早到的場合",
+      "rightZh": "遲到比較好",
+      "leftEn": "An occasion where you should arrive early",
+      "rightEn": "An occasion where being late is better",
+      "tags": [
+        "daily",
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "高鐵",
+        "婚禮",
+        "朋友聚餐",
+        "廟會開始時間"
+      ]
+    },
+    {
+      "id": "gift_moving_furious",
+      "leftZh": "收到會想感動的禮物",
+      "rightZh": "收到會翻臉",
+      "leftEn": "A gift that would move you to tears",
+      "rightEn": "A gift that would make you furious",
+      "tags": [
+        "social",
+        "gift",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "手寫卡片",
+        "實用的禮物",
+        "明明不需要卻很貴的東西"
+      ]
+    },
+    {
+      "id": "sci_fi_reality",
+      "leftZh": "完全像科幻",
+      "rightZh": "幾乎已經是現實",
+      "leftEn": "Pure science fiction",
+      "rightEn": "Almost already reality",
+      "tags": [
+        "technology",
+        "future",
+        "abstract"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "月球基地",
+        "自動駕駛",
+        "AI 即時翻譯"
+      ]
+    },
+    {
+      "id": "ai_cant_help_ai_faster",
+      "leftZh": "AI 幫不上忙",
+      "rightZh": "交給 AI 比較快",
+      "leftEn": "Something AI can't really help with",
+      "rightEn": "Something faster to hand to AI",
+      "tags": [
+        "ai",
+        "technology",
+        "daily",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "陪朋友喝酒",
+        "整理大量資料",
+        "寫一封制式 email"
+      ]
+    },
+    {
+      "id": "frugal_spendthrift",
+      "leftZh": "超省的消費習慣",
+      "rightZh": "敗家子/女",
+      "leftEn": "Extremely frugal spending",
+      "rightEn": "Total spendthrift behavior",
+      "tags": [
+        "money",
+        "daily",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "自帶環保杯折五塊",
+        "深夜手搖全加料",
+        "雙十一購物車"
+      ]
+    },
+    {
+      "id": "queue_not_worth_worth_it",
+      "leftZh": "根本不該排",
+      "rightZh": "一早就該來排",
+      "leftEn": "Absolutely not worth queuing for",
+      "rightEn": "Worth lining up from early morning",
+      "tags": [
+        "taiwan",
+        "food",
+        "daily"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "普通鹽水雞",
+        "名店小籠包",
+        "期間限定甜點"
+      ]
+    },
+    {
+      "id": "delivery_home_cook",
+      "leftZh": "外送時叫的",
+      "rightZh": "自己煮的",
+      "leftEn": "Something you would order for delivery",
+      "rightEn": "Something you would cook yourself",
+      "tags": [
+        "food",
+        "daily"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "下雨的晚上",
+        "剩菜蛋炒飯",
+        "公司訂便當",
+        "週日早午餐"
+      ]
+    },
+    {
+      "id": "useless_app_great_app",
+      "leftZh": "廢到只佔空間的 app",
+      "rightZh": "超讚超推的 app",
+      "leftEn": "An app that's useless and takes up space",
+      "rightEn": "An app you enthusiastically recommend",
+      "tags": [
+        "technology",
+        "daily",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "一年只開一次的 app",
+        "導航",
+        "行動銀行"
+      ]
+    },
+    {
+      "id": "overshare_normal_share",
+      "leftZh": "這也要講？",
+      "rightZh": "很正常的分享",
+      "leftEn": "Why would you share that?",
+      "rightEn": "A perfectly normal thing to share",
+      "tags": [
+        "social",
+        "internet",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "公司群組報早餐",
+        "曖昧對象傳定位",
+        "分享旅行照片"
+      ]
+    },
+    {
+      "id": "not_spicy_nuclear",
+      "leftZh": "完全不辣",
+      "rightZh": "辣到懷疑人生",
+      "leftEn": "Not spicy at all",
+      "rightEn": "So spicy you question your life",
+      "tags": [
+        "food",
+        "senses",
+        "taiwan"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "白粥",
+        "麻辣鴨血",
+        "朋友說的小辣"
+      ]
+    },
+    {
+      "id": "chewy_crispy",
+      "leftZh": "軟Q",
+      "rightZh": "酥脆",
+      "leftEn": "Soft and chewy",
+      "rightEn": "Crispy and crunchy",
+      "tags": [
+        "food",
+        "senses"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "粉圓",
+        "鹽酥雞",
+        "麻糬"
+      ]
+    },
+    {
+      "id": "soupy_dry",
+      "leftZh": "湯湯水水",
+      "rightZh": "乾到噎住",
+      "leftEn": "Soupy and watery",
+      "rightEn": "So dry it makes you choke",
+      "tags": [
+        "food",
+        "senses"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "牛肉麵",
+        "油飯",
+        "滷肉飯"
+      ]
+    },
+    {
+      "id": "night_market_must_trap",
+      "leftZh": "夜市必吃",
+      "rightZh": "觀光客陷阱",
+      "leftEn": "A night-market must-eat",
+      "rightEn": "A tourist trap",
+      "tags": [
+        "food",
+        "taiwan",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "胡椒餅",
+        "彩虹棉花糖",
+        "藥燉排骨"
+      ]
+    },
+    {
+      "id": "plain_loaded",
+      "leftZh": "原味的最好",
+      "rightZh": "必須料加爆",
+      "leftEn": "Best kept plain",
+      "rightEn": "Must be fully loaded with toppings",
+      "tags": [
+        "food",
+        "taiwan",
+        "daily"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "無糖綠茶",
+        "珍珠奶茶加椰果",
+        "美式咖啡"
+      ]
+    },
+    {
+      "id": "leftover_bad_better",
+      "leftZh": "隔夜有罪的菜",
+      "rightZh": "隔夜更香",
+      "leftEn": "Terrible as leftovers",
+      "rightEn": "Even better the next day",
+      "tags": [
+        "food",
+        "taiwan",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "壽司",
+        "炸物",
+        "咖哩"
+      ]
+    },
+    {
+      "id": "war_peace_comment_section",
+      "leftZh": "留言區已經開戰",
+      "rightZh": "留言區超和平",
+      "leftEn": "The comments are at war",
+      "rightEn": "The comments are completely peaceful",
+      "tags": [
+        "internet",
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "政治新聞",
+        "貓咪影片",
+        "鹹豆漿甜豆漿"
+      ]
+    },
+    {
+      "id": "viral_mystery_late",
+      "leftZh": "不懂為什麼會紅",
+      "rightZh": "怎麼現在才紅",
+      "leftEn": "You don't get why it went viral",
+      "rightEn": "You're surprised it only went viral now",
+      "tags": [
+        "internet",
+        "entertainment",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "突然爆紅的歌",
+        "多年以前的迷因",
+        "老片重新翻紅"
+      ]
+    },
+    {
+      "id": "slightly_awkward_social_death",
+      "leftZh": "小小尷尬",
+      "rightZh": "社死現場",
+      "leftEn": "Mildly awkward",
+      "rightEn": "A full social-death moment",
+      "tags": [
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "叫錯名字",
+        "傳錯群組",
+        "在眾人面前跌倒"
+      ]
+    },
+    {
+      "id": "friendship_test_break",
+      "leftZh": "小小考驗友情",
+      "rightZh": "一秒友情破裂",
+      "leftEn": "A small test of friendship",
+      "rightEn": "Instant friendship-ending material",
+      "tags": [
+        "relationship",
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "忘記生日",
+        "搶最後一塊炸雞",
+        "借錢不還"
+      ]
+    },
+    {
+      "id": "secret_not_secret_critical",
+      "leftZh": "不值得保密",
+      "rightZh": "死都不能說",
+      "leftEn": "Not worth keeping secret",
+      "rightEn": "A secret you must take to the grave",
+      "tags": [
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "今天早餐吃什麼",
+        "朋友的秘密",
+        "公司尚未公開的消息"
+      ]
+    },
+    {
+      "id": "breakup_excuse_bad_unanswerable",
+      "leftZh": "超瞎的分手理由",
+      "rightZh": "無法反駁的分手理由",
+      "leftEn": "A ridiculous breakup reason",
+      "rightEn": "A breakup reason you can't argue with",
+      "tags": [
+        "relationship",
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "你走路聲音太大",
+        "我們的人生規劃真的不同",
+        "我需要先愛自己"
+      ]
+    },
+    {
+      "id": "ruined_date_perfect_date",
+      "leftZh": "完美搞砸的約會",
+      "rightZh": "完美的約會",
+      "leftEn": "A perfectly disastrous date",
+      "rightEn": "A perfect date",
+      "tags": [
+        "dating",
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "下雨沒帶傘",
+        "吃飯一直滑手機",
+        "海邊散步看夕陽"
+      ]
+    },
+    {
+      "id": "hurtful_honesty_beautiful_lie",
+      "leftZh": "誠實到傷人的一句話",
+      "rightZh": "美麗的謊言",
+      "leftEn": "A brutally honest statement",
+      "rightEn": "A beautiful lie",
+      "tags": [
+        "social",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "這件衣服好看嗎",
+        "我在路上",
+        "你最近看起來很累"
+      ]
+    },
+    {
+      "id": "unconversation_all_night",
+      "leftZh": "完全聊不下去的話題",
+      "rightZh": "可以聊一整晚",
+      "leftEn": "A topic you can't keep talking about",
+      "rightEn": "A topic you could discuss all night",
+      "tags": [
+        "social",
+        "conversation",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "天氣",
+        "最近看的電影",
+        "旅行"
+      ]
+    },
+    {
+      "id": "forgettable_lifetime_memory",
+      "leftZh": "過三天就忘了",
+      "rightZh": "會記一輩子",
+      "leftEn": "Forgotten in three days",
+      "rightEn": "Remembered for a lifetime",
+      "tags": [
+        "life",
+        "memory",
+        "abstract"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "普通的週末",
+        "第一次出國",
+        "人生中最尷尬的一天"
+      ]
+    },
+    {
+      "id": "regret_trip_repeat_trip",
+      "leftZh": "去了會後悔",
+      "rightZh": "想一去再去",
+      "leftEn": "A trip you'd regret taking",
+      "rightEn": "A place you'd visit again and again",
+      "tags": [
+        "travel",
+        "place",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "景點只剩打卡",
+        "東京",
+        "小時候的家鄉"
+      ]
+    },
+    {
+      "id": "frugal_luxurious",
+      "leftZh": "極致寒酸",
+      "rightZh": "極致奢華",
+      "leftEn": "Extremely shabby",
+      "rightEn": "Extremely luxurious",
+      "tags": [
+        "money",
+        "lifestyle",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "泡麵配白開水",
+        "五星飯店總統套房",
+        "便利商店生日餐"
+      ]
+    },
+    {
+      "id": "new_year_good_bad_topics",
+      "leftZh": "過年喜歡的話題",
+      "rightZh": "過年想躲的話題",
+      "leftEn": "A New Year topic you enjoy",
+      "rightEn": "A New Year topic you want to avoid",
+      "tags": [
+        "taiwan",
+        "family",
+        "holiday",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "吃飽沒",
+        "薪水多少",
+        "什麼時候結婚"
+      ]
+    },
+    {
+      "id": "boring_fun",
+      "leftZh": "幹也太無聊",
+      "rightZh": "幹也太好玩",
+      "leftEn": "Damn, this is boring",
+      "rightEn": "Damn, this is so much fun",
+      "tags": [
+        "taiwan",
+        "comedy",
+        "experience"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.2,
+      "sampleClues": [
+        "排隊兩小時",
+        "朋友臨時揪桌遊",
+        "夜市玩投籃"
+      ]
+    },
+    {
+      "id": "healing_harmful",
+      "leftZh": "毀壞身心",
+      "rightZh": "超級療癒",
+      "leftEn": "Damaging to body and mind",
+      "rightEn": "Extremely healing",
+      "tags": [
+        "food",
+        "life",
+        "wellness",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "連續熬夜",
+        "泡溫泉",
+        "躺在床上追劇"
+      ]
+    },
+    {
+      "id": "regret_order_more",
+      "leftZh": "吃完馬上後悔",
+      "rightZh": "馬上加點一份",
+      "leftEn": "Instantly regretted after eating",
+      "rightEn": "So good you immediately order another",
+      "tags": [
+        "food",
+        "comedy"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "炸雞",
+        "臭豆腐",
+        "踩雷的甜點"
+      ]
+    },
+    {
+      "id": "solo_group_activity",
+      "leftZh": "適合一個人去",
+      "rightZh": "適合一群人去",
+      "leftEn": "Best done alone",
+      "rightEn": "Best done with a group",
+      "tags": [
+        "social",
+        "travel",
+        "experience"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "看電影",
+        "唱 KTV",
+        "逛夜市"
+      ]
+    },
+    {
+      "id": "anytime_special_occasion_food",
+      "leftZh": "隨時都能吃",
+      "rightZh": "特別場合才吃",
+      "leftEn": "Something you can eat anytime",
+      "rightEn": "Something reserved for special occasions",
+      "tags": [
+        "food",
+        "lifestyle",
+        "culture"
+      ],
+      "nsfw": false,
+      "enabled": true,
+      "weight": 1.0,
+      "sampleClues": [
+        "便利商店飯糰",
+        "年夜飯",
+        "生日蛋糕"
+      ]
+    }
+  ]
+}

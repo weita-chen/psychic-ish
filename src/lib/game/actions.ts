@@ -8,7 +8,13 @@ const tokenFields = {
 };
 
 export const createRoom = createServerFn({ method: "POST" })
-  .validator(z.object({ nickname: z.string(), characterId: z.string() }))
+  .validator(
+    z.object({
+      nickname: z.string(),
+      characterId: z.string(),
+      deckIds: z.array(z.enum(["a", "b"])).min(1).optional(),
+    }),
+  )
   .handler(async ({ data }): Promise<ActionResult> => {
     const { createRoomRecord } = await import("./store.server");
     return createRoomRecord(data);
