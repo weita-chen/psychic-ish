@@ -250,16 +250,6 @@ function Lobby({ view, room }: { view: ClientView; room: RoomApi }) {
         <p className="mt-3 text-center text-sm text-muted">{COPY.shareHint}</p>
       </div>
 
-      <div>
-        <span className="mb-1.5 block text-sm font-medium">{COPY.deckPicker}</span>
-        <p className="mb-2 text-xs text-muted">{COPY.deckHint}</p>
-        <DeckPicker
-          value={view.deckIds ?? []}
-          disabled={!view.you.isHost}
-          onChange={view.you.isHost ? (ids) => void room.setDecks(ids) : undefined}
-        />
-      </div>
-
       <PlayerRoster players={view.players} showScores={false} />
 
       <div className="space-y-3">
@@ -279,6 +269,15 @@ function Lobby({ view, room }: { view: ClientView; room: RoomApi }) {
             void room.profile(nickname, id);
           }}
         />
+        <div>
+          <span className="mb-1.5 block text-sm font-medium">{COPY.deckPicker}</span>
+          <p className="mb-2 text-xs text-muted">{COPY.deckHint}</p>
+          <DeckPicker
+            value={view.deckIds ?? []}
+            disabled={!view.you.isHost}
+            onChange={view.you.isHost ? (ids) => void room.setDecks(ids) : undefined}
+          />
+        </div>
       </div>
 
       {view.you.isHost ? (
