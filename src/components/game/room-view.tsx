@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { COPY } from "@/lib/game/copy";
 import { isCharacterId } from "@/lib/game/characters";
-import type { CharacterId, ClientView } from "@/lib/game/types";
+import type { CharacterId, ClientView, TurnRecap } from "@/lib/game/types";
 import { MAX_CLUE_LEN } from "@/lib/game/types";
 import { useRoom } from "@/lib/game/use-room";
 import { loadSession, type Session } from "@/lib/session";
-import { Check, Copy } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Check, ChevronDown, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export function RoomView({
@@ -443,10 +444,59 @@ function Reveal({ view, room }: { view: ClientView; room: RoomApi }) {
 
 function RoundResults({ view, room }: { view: ClientView; room: RoomApi }) {
   const navigate = useNavigate();
+  const [showRecap, setShowRecap] = useState(false);
+  const titles = view.titles;
   return (
     <>
       <h2 className="text-center font-display text-2xl font-semibold">{COPY.roundResults}</h2>
-      <PlayerRoster players={view.players} showScores titles={view.titles} />
+      <PlayerRoster
+        players={view.players}
+        showScores
+        showDevotee={false}
+        showTurnScore={false}
+        titles={titles}
+      />
+      {view.roundHistory.length > 0 && (
+        <div>
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => setShowRecap((v) => !v)}
+            aria-expanded={showRecap}
+          >
+            {showRecap ? COPY.hideRoundRecap : COPY.showRoundRecap}
+            <ChevronDown className={cn("size-4 transition-transform", showRecap && "rotate-180")} />
+          </Button>
+          {showRecap && (
+            <div className="mt-3 flex flex-col gap-4">
+              {view.roundHistory.map((turn) => (
+                <TurnRecapCard key={turn.turnNumber} turn={turn} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {titles && (
+        <ul className="space-y-1.5 rounded-[16px] bg-surface px-4 py-3 text-sm text-muted">
+          <li>
+            <strong className="text-ink">{COPY.master}</strong>
+            {" · "}
+            {COPY.titleMasterHint}
+          </li>
+          <li>
+            <strong className="text-ink">{COPY.lastPlace}</strong>
+            {" · "}
+            {COPY.titleFraudHint}
+          </li>
+          {view.mode === "party" && (
+            <li>
+              <strong className="text-ink">{COPY.bestDevotee}</strong>
+              {" · "}
+              {COPY.titleBestDevoteeHint}
+            </li>
+          )}
+        </ul>
+      )}
       {view.canPlayAgain ? (
         <Button size="lg" className="mt-auto w-full" onClick={() => void room.playAgain()}>
           {COPY.playAgain}
@@ -460,6 +510,39 @@ function RoundResults({ view, room }: { view: ClientView; room: RoomApi }) {
         {COPY.home}
       </Button>
     </>
+  );
+}
+
+function TurnRecapCard({ turn }: { turn: TurnRecap }) {
+  return (
+    <div className="rounded-[16px] bg-surface p-3 shadow-[0_0_0_1px_rgba(42,24,16,0.06)]">
+      <p className="text-[11px] tracking-[0.18em] text-muted">
+        第 {turn.turnNumber} 問 · 信眾 {turn.devoteeNickname}
+      </p>
+      <p className="mt-1 font-display text-base font-semibold leading-snug">{turn.clue}</p>
+      <div className="mt-3">
+        <Spectrum
+          leftLabel={turn.leftZh}
+          rightLabel={turn.rightZh}
+          interactive={false}
+          targetCenter={turn.targetCenter}
+          showBands
+          needles={turn.guesses}
+        />
+      </div>
+      <ul className="mt-2 space-y-0.5 text-xs text-muted">
+        {turn.guesses.map((g) => (
+          <li key={g.playerId} className="flex justify-between tabular-nums">
+            <span className="truncate text-ink">{g.nickname}</span>
+            <span>+{g.score}</span>
+          </li>
+        ))}
+        <li className="flex justify-between tabular-nums">
+          <span>信眾 {turn.devoteeNickname}</span>
+          <span>+{turn.devoteeScore}</span>
+        </li>
+      </ul>
+    </div>
   );
 }
 

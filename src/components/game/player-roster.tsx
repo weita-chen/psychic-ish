@@ -1,6 +1,6 @@
 import { CharacterAvatar } from "./character-avatar";
 import { COPY } from "@/lib/game/copy";
-import type { PublicPlayer } from "@/lib/game/types";
+import type { PublicPlayer, RoundTitles } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -8,23 +8,25 @@ export function PlayerRoster({
   players,
   showReady = false,
   showScores = false,
+  showDevotee = true,
+  showTurnScore = true,
   titles = null,
 }: {
   players: PublicPlayer[];
   showReady?: boolean;
   showScores?: boolean;
-  titles?: { masterId: string; fraudId: string } | null;
+  showDevotee?: boolean;
+  showTurnScore?: boolean;
+  titles?: RoundTitles | null;
 }) {
   const visible = players.filter((p) => p.status !== "left");
   return (
     <ul className="flex flex-col gap-1.5">
       {visible.map((p) => {
-        const title =
-          titles && p.playerId === titles.masterId
-            ? COPY.master
-            : titles && p.playerId === titles.fraudId
-              ? COPY.lastPlace
-              : null;
+        const badges: string[] = [];
+        if (titles?.masterId === p.playerId) badges.push(COPY.master);
+        if (titles?.bestDevoteeId === p.playerId) badges.push(COPY.bestDevotee);
+        if (titles?.fraudId === p.playerId) badges.push(COPY.lastPlace);
         return (
           <li
             key={p.playerId}
@@ -39,7 +41,7 @@ export function PlayerRoster({
           >
             <CharacterAvatar id={p.characterId} size="sm" />
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <span className="truncate font-medium text-ink">
                   {p.nickname}
                   {p.isYou ? `（${COPY.you}）` : ""}
@@ -47,16 +49,19 @@ export function PlayerRoster({
                 {p.isHost && (
                   <span className="shrink-0 text-[10px] tracking-wide text-muted">{COPY.host}</span>
                 )}
-                {p.isDevotee && (
+                {showDevotee && p.isDevotee && (
                   <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
                     {COPY.devotee}
                   </span>
                 )}
-                {title && (
-                  <span className="shrink-0 rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-primary-fg">
+                {badges.map((title) => (
+                  <span
+                    key={title}
+                    className="shrink-0 rounded-full bg-ink px-1.5 py-0.5 text-[10px] text-primary-fg"
+                  >
                     {title}
                   </span>
-                )}
+                ))}
               </div>
               <p className="text-[11px] text-muted">
                 {p.status === "disconnected"
@@ -79,7 +84,7 @@ export function PlayerRoster({
             )}
             {showScores && (
               <div className="text-right">
-                {p.turnScore != null && (
+                {showTurnScore && p.turnScore != null && (
                   <div className="text-xs text-muted tabular-nums">+{p.turnScore}</div>
                 )}
                 <div className="font-display text-lg font-semibold tabular-nums leading-none">

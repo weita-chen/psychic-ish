@@ -46,6 +46,7 @@ export type Player = {
   totalScore: number;
   joinedAt: number;
   colorIndex: number;
+  devoteeRoundScore: number;
 };
 
 export type CurrentTurn = {
@@ -60,6 +61,27 @@ export type CurrentTurn = {
   turnScores: Record<string, number>;
   averagePosition: number | null;
   lastCardId: string | null;
+};
+
+export type TurnRecapGuess = {
+  playerId: string;
+  nickname: string;
+  characterId: CharacterId;
+  colorIndex: number;
+  position: number;
+  score: number;
+};
+
+export type TurnRecap = {
+  turnNumber: number;
+  devoteeId: string;
+  devoteeNickname: string;
+  leftZh: string;
+  rightZh: string;
+  clue: string;
+  targetCenter: number;
+  guesses: TurnRecapGuess[];
+  devoteeScore: number;
 };
 
 export type RoomState = {
@@ -78,6 +100,7 @@ export type RoomState = {
   closedReason: string | null;
   nudge: { fromId: string; at: number } | null;
   createdAt: number;
+  roundHistory: TurnRecap[];
 };
 
 export type PublicPlayer = {
@@ -111,6 +134,12 @@ export type RevealedNeedle = {
   score: number;
 };
 
+export type RoundTitles = {
+  masterId: string;
+  fraudId: string;
+  bestDevoteeId: string | null;
+};
+
 export type ClientView = {
   roomCode: string;
   you: {
@@ -142,7 +171,8 @@ export type ClientView = {
   canPlayAgain: boolean;
   canContinueDuo: boolean;
   canSettleDuo: boolean;
-  titles: { masterId: string; fraudId: string } | null;
+  titles: RoundTitles | null;
+  roundHistory: TurnRecap[];
   closedReason: string | null;
   nudgeAt: number | null;
   version: number;

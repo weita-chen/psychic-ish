@@ -49,8 +49,12 @@ async function withLock<T>(key: string, fn: () => Promise<T>): Promise<T> {
 }
 
 function parseState(raw: RoomState | string): RoomState {
-  if (typeof raw === "string") return JSON.parse(raw) as RoomState;
-  return raw;
+  const state = (typeof raw === "string" ? JSON.parse(raw) : raw) as RoomState;
+  if (!Array.isArray(state.roundHistory)) state.roundHistory = [];
+  for (const p of state.players) {
+    if (typeof p.devoteeRoundScore !== "number") p.devoteeRoundScore = 0;
+  }
+  return state;
 }
 
 function parseTokens(raw: Record<string, string> | string): Record<string, string> {

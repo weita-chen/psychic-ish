@@ -134,6 +134,7 @@ export function createEmptyRoom(roomCode: string, host: Player): RoomState {
     closedReason: null,
     nudge: null,
     createdAt: now,
+    roundHistory: [],
   };
 }
 
@@ -155,6 +156,7 @@ export function makePlayer(input: {
     totalScore: 0,
     joinedAt: now,
     colorIndex: input.colorIndex,
+    devoteeRoundScore: 0,
   };
 }
 
@@ -304,10 +306,12 @@ function resetRoundFlags(state: RoomState): void {
   for (const p of state.players) {
     p.hasBeenDevoteeThisRound = false;
     p.totalScore = 0;
+    p.devoteeRoundScore = 0;
   }
   state.roundNumber += 1;
   state.turnNumber = 0;
   state.remainingCardIds = enabledCardIds();
+  state.roundHistory = [];
 }
 
 export function startGame(state: RoomState, actorId: string, now: number): void {
@@ -371,6 +375,29 @@ function performReveal(state: RoomState, now: number): void {
   scores[turn.devoteeId] = devoteeScore;
   turn.turnScores = scores;
   turn.averagePosition = count > 0 ? sumPos / count : null;
+  if (devotee) {
+    devotee.devoteeRoundScore = (devotee.devoteeRoundScore ?? 0) + devoteeScore;
+  }
+  const card = getCard(turn.cardId);
+  if (!state.roundHistory) state.roundHistory = [];
+  state.roundHistory.push({
+    turnNumber: state.turnNumber,
+    devoteeId: turn.devoteeId,
+    devoteeNickname: devotee?.nickname ?? "",
+    leftZh: card?.leftZh ?? "",
+    rightZh: card?.rightZh ?? "",
+    clue: turn.clue ?? "",
+    targetCenter: turn.targetCenter,
+    guesses: chan.map((p) => ({
+      playerId: p.playerId,
+      nickname: p.nickname,
+      characterId: p.characterId,
+      colorIndex: p.colorIndex,
+      position: turn.needlePositions[p.playerId] ?? DEFAULT_NEEDLE,
+      score: scores[p.playerId] ?? 0,
+    })),
+    devoteeScore,
+  });
   state.phase = "reveal";
   if (state.mode === "party") {
     state.interstitialEndsAt = now + 7000;
@@ -599,9 +626,21 @@ function titlesFor(state: RoomState, now: number): ClientView["titles"] {
     return a.joinedAt - b.joinedAt;
   });
   if (ranked.length < 2) return null;
+  let bestDevoteeId: string | null = null;
+  if (state.mode === "party") {
+    const byDevotee = [...ranked].sort((a, b) => {
+      const da = a.devoteeRoundScore ?? 0;
+      const db = b.devoteeRoundScore ?? 0;
+      if (db !== da) return db - da;
+      return a.joinedAt - b.joinedAt;
+    });
+    const top = byDevotee[0];
+    if (top && (top.devoteeRoundScore ?? 0) > 0) bestDevoteeId = top.playerId;
+  }
   return {
     masterId: ranked[0]!.playerId,
     fraudId: ranked[ranked.length - 1]!.playerId,
+    bestDevoteeId,
   };
 }
 
@@ -707,6 +746,7 @@ export function toClientView(
     canContinueDuo: state.phase === "reveal" && state.mode === "duo",
     canSettleDuo: state.phase === "reveal" && state.mode === "duo",
     titles: titlesFor(state, now),
+    roundHistory: state.phase === "roundResults" ? (state.roundHistory ?? []) : [],
     closedReason: state.closedReason,
     nudgeAt: state.nudge?.at ?? null,
     version,
