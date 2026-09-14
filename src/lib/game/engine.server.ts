@@ -1,6 +1,6 @@
 import { COPY } from "./copy";
 import { isCharacterId } from "./characters";
-import { ALL_CARDS, enabledCardIdsFor, parseDeckIds } from "./decks";
+import { ALL_CARDS, enabledCardIdsFor, parseDeckIds, sanitizeDeckIds } from "./decks";
 import { clamp01, randomTargetCenter, scoreNeedle } from "./scoring";
 import {
   DEFAULT_NEEDLE,
@@ -572,6 +572,21 @@ export function nudge(state: RoomState, actorId: string, now: number): void {
     throw new GameError("phase", COPY.invalidAction);
   }
   state.nudge = { fromId: actorId, at: now };
+}
+
+export function updateDecks(state: RoomState, actorId: string, rawDeckIds: unknown): void {
+  if (state.phase !== "lobby") {
+    throw new GameError("phase", COPY.invalidAction);
+  }
+  if (actorId !== state.hostPlayerId) {
+    throw new GameError("forbidden", COPY.invalidAction);
+  }
+  const deckIds = sanitizeDeckIds(rawDeckIds);
+  if (deckIds.length === 0) {
+    throw new GameError("deck", COPY.deckNeedOne);
+  }
+  state.deckIds = deckIds;
+  state.remainingCardIds = enabledCardIds(deckIds);
 }
 
 export function updateProfile(

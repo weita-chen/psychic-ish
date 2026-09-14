@@ -12,9 +12,11 @@ import {
   settleDuo,
   startGame,
   submitClue,
+  updateDecks,
   updateProfile,
 } from "./actions";
 import type { ActionResult, CharacterId, ClientView } from "./types";
+import type { DeckId } from "./decks";
 import { COPY } from "./copy";
 import { clearSession, saveSession, type Session } from "@/lib/session";
 
@@ -26,7 +28,7 @@ declare global {
 
 function pollDelay(phase: ClientView["phase"] | undefined): number {
   if (phase === "guessing" || phase === "revealCountdown" || phase === "interstitial") return 400;
-  if (phase === "awaitClue" || phase === "reveal") return 500;
+  if (phase === "awaitClue" || phase === "reveal" || phase === "lobby") return 500;
   return 900;
 }
 
@@ -189,6 +191,17 @@ export function useRoom(session: Session | null) {
           data: { roomCode: s.roomCode, token: s.token, nickname, characterId },
         }),
       ),
+    setDecks: (deckIds: DeckId[]) => {
+      if (!s || deckIds.length < 1) return;
+      setView((cur) => (cur ? { ...cur, deckIds } : cur));
+      return updateDecks({
+        data: { roomCode: s.roomCode, token: s.token, deckIds },
+      })
+        .then(apply)
+        .catch(() => {
+          setError(COPY.network);
+        });
+    },
     clue: (text: string) =>
       s && run(() => submitClue({ data: { roomCode: s.roomCode, token: s.token, clue: text } })),
     needle: (position: number) => {

@@ -16,9 +16,13 @@ export function isDeckId(raw: string): raw is DeckId {
   return (DECK_IDS as readonly string[]).includes(raw);
 }
 
+export function sanitizeDeckIds(raw: unknown): DeckId[] {
+  if (!Array.isArray(raw)) return [];
+  return [...new Set(raw.filter((x): x is string => typeof x === "string").filter(isDeckId))];
+}
+
 export function parseDeckIds(raw: unknown): DeckId[] {
-  if (!Array.isArray(raw)) return [...DECK_IDS];
-  const ids = [...new Set(raw.filter((x): x is string => typeof x === "string").filter(isDeckId))];
+  const ids = sanitizeDeckIds(raw);
   return ids.length > 0 ? ids : [...DECK_IDS];
 }
 

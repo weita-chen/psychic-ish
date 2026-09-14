@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CharacterPicker } from "./character-avatar";
+import { DeckPicker } from "./deck-picker";
 import { PlayerRoster } from "./player-roster";
 import { RulesButton } from "./rules-dialog";
 import { Spectrum } from "./spectrum";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { COPY } from "@/lib/game/copy";
-import { deckLabels } from "@/lib/game/decks";
 import { isCharacterId } from "@/lib/game/characters";
 import type { CharacterId, ClientView, TurnRecap } from "@/lib/game/types";
 import { MAX_CLUE_LEN } from "@/lib/game/types";
@@ -248,9 +248,16 @@ function Lobby({ view, room }: { view: ClientView; room: RoomApi }) {
           {view.roomCode}
         </p>
         <p className="mt-3 text-center text-sm text-muted">{COPY.shareHint}</p>
-        {view.deckIds?.length > 0 && (
-          <p className="mt-2 text-center text-xs text-faint">{deckLabels(view.deckIds)}</p>
-        )}
+      </div>
+
+      <div>
+        <span className="mb-1.5 block text-sm font-medium">{COPY.deckPicker}</span>
+        <p className="mb-2 text-xs text-muted">{COPY.deckHint}</p>
+        <DeckPicker
+          value={view.deckIds ?? []}
+          disabled={!view.you.isHost}
+          onChange={view.you.isHost ? (ids) => void room.setDecks(ids) : undefined}
+        />
       </div>
 
       <PlayerRoster players={view.players} showScores={false} />

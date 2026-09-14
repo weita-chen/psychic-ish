@@ -56,6 +56,21 @@ export const updateProfile = createServerFn({ method: "POST" })
     });
   });
 
+export const updateDecks = createServerFn({ method: "POST" })
+  .validator(
+    z.object({
+      ...tokenFields,
+      deckIds: z.array(z.enum(["a", "b"])).min(1),
+    }),
+  )
+  .handler(async ({ data }): Promise<ActionResult> => {
+    const { mutateRoom } = await import("./store.server");
+    const { updateDecks: apply } = await import("./engine.server");
+    return mutateRoom(data.roomCode, { token: data.token }, ({ state, playerId }) => {
+      apply(state, playerId, data.deckIds);
+    });
+  });
+
 export const startGame = createServerFn({ method: "POST" })
   .validator(z.object(tokenFields))
   .handler(async ({ data }): Promise<ActionResult> => {
