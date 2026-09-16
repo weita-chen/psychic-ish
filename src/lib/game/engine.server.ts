@@ -133,7 +133,6 @@ export function createEmptyRoom(roomCode: string, host: Player, deckIds: string[
     lastActivityAt: now,
     interstitialEndsAt: null,
     closedReason: null,
-    nudge: null,
     createdAt: now,
     roundHistory: [],
     deckIds: decks,
@@ -290,7 +289,6 @@ function startTurn(state: RoomState, now: number): void {
   };
   state.phase = "awaitClue";
   state.interstitialEndsAt = null;
-  state.nudge = null;
 }
 
 function resetRoundFlags(state: RoomState): void {
@@ -595,17 +593,6 @@ export function setReaction(state: RoomState, actorId: string, raw: string, now:
   state.currentTurn.reactions[actorId] = raw;
 }
 
-export function nudge(state: RoomState, actorId: string, now: number): void {
-  if (state.phase !== "guessing" && state.phase !== "awaitClue") {
-    throw new GameError("phase", COPY.invalidAction);
-  }
-  const actor = state.players.find((p) => p.playerId === actorId);
-  if (!actor || !isActive(actor, now)) {
-    throw new GameError("phase", COPY.invalidAction);
-  }
-  state.nudge = { fromId: actorId, at: now };
-}
-
 export function updateDecks(state: RoomState, actorId: string, rawDeckIds: unknown): void {
   if (state.phase !== "lobby") {
     throw new GameError("phase", COPY.invalidAction);
@@ -814,7 +801,6 @@ export function toClientView(
     roundHistory: state.phase === "roundResults" ? (state.roundHistory ?? []) : [],
     deckIds: state.deckIds ?? ["a"],
     closedReason: state.closedReason,
-    nudgeAt: state.nudge?.at ?? null,
     version,
   };
 }

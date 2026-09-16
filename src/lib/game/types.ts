@@ -99,7 +99,6 @@ export type RoomState = {
   lastActivityAt: number;
   interstitialEndsAt: number | null;
   closedReason: string | null;
-  nudge: { fromId: string; at: number } | null;
   createdAt: number;
   roundHistory: TurnRecap[];
   deckIds: string[];
@@ -183,7 +182,6 @@ export type ClientView = {
   roundHistory: TurnRecap[];
   deckIds: string[];
   closedReason: string | null;
-  nudgeAt: number | null;
   version: number;
 };
 

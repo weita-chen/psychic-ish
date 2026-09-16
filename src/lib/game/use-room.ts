@@ -8,7 +8,6 @@ import {
   markReady,
   moveNeedle,
   playAgain,
-  sendNudge,
   setReaction,
   settleDuo,
   startGame,
@@ -239,8 +238,6 @@ export function useRoom(session: Session | null) {
       s && run(() => playAgain({ data: { roomCode: s.roomCode, token: s.token } })),
     advance: () =>
       s && run(() => advanceReveal({ data: { roomCode: s.roomCode, token: s.token } })),
-    nudge: () =>
-      s && run(() => sendNudge({ data: { roomCode: s.roomCode, token: s.token } })),
     react: (reaction: string) => {
       if (!s) return;
       setView((cur) => {

@@ -31,18 +31,6 @@ export function RoomView({
   const [session, setSession] = useState<Session | null>(initialSession ?? loadSession(code));
   const room = useRoom(session);
 
-  useEffect(() => {
-    if (room.view?.nudgeAt) {
-      const last = Number(sessionStorage.getItem("psychicish.nudge") || 0);
-      if (room.view.nudgeAt > last) {
-        sessionStorage.setItem("psychicish.nudge", String(room.view.nudgeAt));
-        if (room.view.you.isChanneler && !room.view.yourReady) {
-          toast(COPY.nudge);
-        }
-      }
-    }
-  }, [room.view?.nudgeAt, room.view?.you.isChanneler, room.view?.yourReady]);
-
   if (onNeedJoin && !session) {
     return <JoinGate code={code} onJoined={setSession} />;
   }
@@ -377,12 +365,7 @@ function Guessing({ view, room }: { view: ClientView; room: RoomApi }) {
         </>
       )}
       {view.you.isDevotee && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted">{COPY.waitingGuess}</p>
-          <Button variant="ghost" size="sm" onClick={() => void room.nudge()}>
-            {COPY.nudge}
-          </Button>
-        </div>
+        <p className="text-sm text-muted">{COPY.waitingGuess}</p>
       )}
       <PlayerRoster players={view.players} showReady showScores />
     </>

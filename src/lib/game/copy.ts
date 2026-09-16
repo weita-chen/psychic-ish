@@ -29,7 +29,6 @@ export const COPY = {
   titleWorstDevoteeHint: "當信眾時，提示讓通靈者拿到最少分",
   showRoundRecap: "本輪問事",
   hideRoundRecap: "收合問事",
-  nudge: "催一下",
   nextDevotee: "下一位信眾即將來問事……",
   roomExpired: "這一壇已經散了。",
   roomNotFound: "找不到這一壇。",
