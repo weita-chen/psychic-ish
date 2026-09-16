@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { CharacterPicker } from "./character-avatar";
 import { RulesButton } from "./rules-dialog";
@@ -112,6 +112,7 @@ export function Landing() {
             </Button>
           </div>
           <p className="mt-8 text-center text-sm text-muted">{COPY.shareHint}</p>
+          <AddToHome />
         </div>
       ) : (
         <form
@@ -178,6 +179,48 @@ export function Landing() {
         </form>
       )}
     </main>
+  );
+}
+
+function AddToHome() {
+  const [hint, setHint] = useState<string | null>(null);
+  const promptRef = useRef<{ prompt: () => Promise<void> } | null>(null);
+  const [standalone, setStandalone] = useState(false);
+
+  useEffect(() => {
+    const standaloneNow =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      ("standalone" in navigator && Boolean((navigator as { standalone?: boolean }).standalone));
+    setStandalone(standaloneNow);
+    const onPrompt = (event: Event) => {
+      event.preventDefault();
+      const e = event as Event & { prompt: () => Promise<void> };
+      promptRef.current = e;
+    };
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+  }, []);
+
+  if (standalone) return null;
+
+  return (
+    <div className="mt-4 text-center">
+      <button
+        type="button"
+        className="text-sm text-primary underline-offset-4 hover:underline"
+        onClick={() => {
+          if (promptRef.current) {
+            void promptRef.current.prompt();
+            return;
+          }
+          const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+          setHint(ios ? COPY.addToHomeIos : "用瀏覽器選單加到主畫面。");
+        }}
+      >
+        {COPY.addToHome}
+      </button>
+      {hint && <p className="mt-2 text-xs text-muted">{hint}</p>}
+    </div>
   );
 }
 

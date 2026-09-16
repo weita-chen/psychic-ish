@@ -65,7 +65,7 @@ export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => v
           </p>
           <ul className="space-y-2 rounded-[16px] bg-surface p-4 text-sm">
             <li>
-              <strong>3–8 人：</strong>信眾得到所有通靈者該局分數的加總。每人當一次信眾後結算。最高分是
+              <strong>3–8 人：</strong>信眾得到所有通靈者該局分數的加總。每人當完一輪信眾後，由壇主選擇繼續問事或結算總分。繼續則再輪一輪。結算時最高分是
               {COPY.master}，最低分是{COPY.lastPlace}。
             </li>
             <li>

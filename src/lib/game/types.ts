@@ -172,6 +172,7 @@ export type ClientView = {
   canPlayAgain: boolean;
   canContinueDuo: boolean;
   canSettleDuo: boolean;
+  cycleChoice: boolean;
   titles: RoundTitles | null;
   roundHistory: TurnRecap[];
   deckIds: string[];

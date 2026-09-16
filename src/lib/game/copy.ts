@@ -72,4 +72,7 @@ export const COPY = {
   deckPicker: "本次問事牌組",
   deckNeedOne: "至少勾一個牌組。",
   deckHint: "壇主請選擇本輪問事牌組，可複選。",
+  hostChoose: "壇主請選擇",
+  addToHome: "加到主畫面",
+  addToHomeIos: "點分享，再選「加入主畫面」。",
 } as const;

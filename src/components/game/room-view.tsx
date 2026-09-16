@@ -437,7 +437,29 @@ function Reveal({ view, room }: { view: ClientView; room: RoomApi }) {
           </Button>
         </div>
       )}
-      {view.phase === "reveal" && view.mode === "party" && (
+      {view.phase === "reveal" && view.cycleChoice && (
+        <div className="mt-auto space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="secondary"
+              size="lg"
+              disabled={!view.you.isHost || room.busy}
+              onClick={() => void room.settleDuo()}
+            >
+              {COPY.settleDuo}
+            </Button>
+            <Button
+              size="lg"
+              disabled={!view.you.isHost || room.busy}
+              onClick={() => void room.continueDuo()}
+            >
+              {COPY.continueDuo}
+            </Button>
+          </div>
+          <p className="text-center text-sm text-muted">{COPY.hostChoose}</p>
+        </div>
+      )}
+      {view.phase === "reveal" && view.mode === "party" && !view.cycleChoice && (
         <Button className="mt-auto w-full" onClick={() => void room.advance()}>
           {COPY.skipWait}
         </Button>

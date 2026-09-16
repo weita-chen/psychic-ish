@@ -209,12 +209,11 @@ export function tick(state: RoomState, now: number): void {
   }
 
   if (state.phase === "reveal" && state.mode === "party") {
-    const ends = state.interstitialEndsAt ?? 0;
-    if (ends && now >= ends) {
-      if (partyRoundComplete(state, now)) {
-        state.phase = "roundResults";
-        state.interstitialEndsAt = null;
-      } else {
+    if (partyRoundComplete(state, now)) {
+      state.interstitialEndsAt = null;
+    } else {
+      const ends = state.interstitialEndsAt ?? 0;
+      if (ends && now >= ends) {
         state.phase = "interstitial";
         state.interstitialEndsAt = now + INTERSTITIAL_MS;
       }
@@ -401,7 +400,7 @@ function performReveal(state: RoomState, now: number): void {
   });
   state.phase = "reveal";
   if (state.mode === "party") {
-    state.interstitialEndsAt = now + 7000;
+    state.interstitialEndsAt = partyRoundComplete(state, now) ? null : now + 7000;
   }
 }
 
@@ -413,7 +412,7 @@ function partyRoundComplete(state: RoomState, now: number): boolean {
 
 function startNextTurn(state: RoomState, now: number): void {
   if (state.mode === "party" && partyRoundComplete(state, now)) {
-    state.phase = "roundResults";
+    state.phase = "reveal";
     state.interstitialEndsAt = null;
     return;
   }
@@ -499,27 +498,51 @@ export function markReady(
 }
 
 export function continueDuo(state: RoomState, actorId: string, now: number): void {
-  if (state.phase !== "reveal" || state.mode !== "duo") {
-    if (state.phase === "awaitClue" && state.mode === "duo") return;
+  if (state.phase !== "reveal") {
+    if (state.phase === "awaitClue") return;
     throw new GameError("phase", COPY.invalidAction);
   }
   const actor = state.players.find((p) => p.playerId === actorId);
   if (!actor || !isActive(actor, now)) {
     throw new GameError("phase", COPY.invalidAction);
   }
-  startTurn(state, now);
+  if (state.mode === "duo") {
+    startTurn(state, now);
+    return;
+  }
+  if (state.mode === "party" && partyRoundComplete(state, now)) {
+    if (actorId !== state.hostPlayerId) {
+      throw new GameError("forbidden", COPY.invalidAction);
+    }
+    for (const p of state.players) p.hasBeenDevoteeThisRound = false;
+    startTurn(state, now);
+    return;
+  }
+  throw new GameError("phase", COPY.invalidAction);
 }
 
 export function settleDuo(state: RoomState, actorId: string, now: number): void {
-  if (state.phase !== "reveal" || state.mode !== "duo") {
-    if (state.phase === "finalResults") return;
+  if (state.phase === "finalResults" || state.phase === "roundResults") return;
+  if (state.phase !== "reveal") {
     throw new GameError("phase", COPY.invalidAction);
   }
   const actor = state.players.find((p) => p.playerId === actorId);
   if (!actor || !isActive(actor, now)) {
     throw new GameError("phase", COPY.invalidAction);
   }
-  state.phase = "finalResults";
+  if (state.mode === "duo") {
+    state.phase = "finalResults";
+    return;
+  }
+  if (state.mode === "party" && partyRoundComplete(state, now)) {
+    if (actorId !== state.hostPlayerId) {
+      throw new GameError("forbidden", COPY.invalidAction);
+    }
+    state.phase = "roundResults";
+    state.interstitialEndsAt = null;
+    return;
+  }
+  throw new GameError("phase", COPY.invalidAction);
 }
 
 export function playAgain(state: RoomState, actorId: string, now: number): void {
@@ -554,11 +577,7 @@ export function advanceAfterReveal(state: RoomState, actorId: string, now: numbe
   if (state.mode === "duo") return;
   const actor = state.players.find((p) => p.playerId === actorId);
   if (!actor || !isActive(actor, now)) return;
-  if (partyRoundComplete(state, now)) {
-    state.phase = "roundResults";
-    state.interstitialEndsAt = null;
-    return;
-  }
+  if (partyRoundComplete(state, now)) return;
   state.phase = "interstitial";
   state.interstitialEndsAt = now + INTERSTITIAL_MS;
 }
@@ -761,6 +780,8 @@ export function toClientView(
     canPlayAgain: state.phase === "roundResults" && viewerId === state.hostPlayerId && hostPresent,
     canContinueDuo: state.phase === "reveal" && state.mode === "duo",
     canSettleDuo: state.phase === "reveal" && state.mode === "duo",
+    cycleChoice:
+      state.phase === "reveal" && state.mode === "party" && partyRoundComplete(state, now),
     titles: titlesFor(state, now),
     roundHistory: state.phase === "roundResults" ? (state.roundHistory ?? []) : [],
     deckIds: state.deckIds ?? ["a"],
