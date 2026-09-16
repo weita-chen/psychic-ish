@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createRoom, joinRoom } from "@/lib/game/actions";
 import { COPY } from "@/lib/game/copy";
+import { APP_VERSION } from "@/lib/game/version";
 import type { CharacterId } from "@/lib/game/types";
 import { loadProfile, saveProfile, saveSession } from "@/lib/session";
 import { isCharacterId } from "@/lib/game/characters";
@@ -82,7 +83,9 @@ export function Landing() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-24 pt-[max(1.5rem,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between">
-        <span className="seal rounded-sm px-2 py-1 text-[10px]">{COPY.appNameEn}</span>
+        <span className="seal rounded-sm px-2 py-1 text-[10px]">
+          {COPY.appNameEn} v{APP_VERSION}
+        </span>
         <RulesButton />
       </header>
 

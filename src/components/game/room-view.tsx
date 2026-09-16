@@ -8,6 +8,7 @@ import { Spectrum } from "./spectrum";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { COPY } from "@/lib/game/copy";
+import { APP_VERSION } from "@/lib/game/version";
 import { isCharacterId } from "@/lib/game/characters";
 import type { CharacterId, ClientView, TurnRecap } from "@/lib/game/types";
 import { MAX_CLUE_LEN } from "@/lib/game/types";
@@ -138,6 +139,9 @@ function Shell({
       <header className="mb-3 flex items-center justify-between gap-2">
         <Link to="/" className="font-display text-sm font-semibold tracking-wide text-ink">
           {COPY.appName}
+          <span className="ml-1.5 font-sans text-[10px] font-normal tracking-wide text-faint">
+            v{APP_VERSION}
+          </span>
         </Link>
         <div className="flex items-center gap-1">
           {code && <CodeChip code={code} />}
@@ -484,7 +488,7 @@ function Reveal({ view, room }: { view: ClientView; room: RoomApi }) {
 
 function RoundResults({ view, room }: { view: ClientView; room: RoomApi }) {
   const navigate = useNavigate();
-  const [showRecap, setShowRecap] = useState(false);
+  const [showRecap, setShowRecap] = useState(true);
   const titles = view.titles;
   return (
     <>
