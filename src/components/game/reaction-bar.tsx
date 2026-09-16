@@ -22,7 +22,7 @@ export function ReactionBar({
             onClick={() => onPick(item)}
             className={cn(
               "flex h-9 items-center justify-center rounded-full bg-surface text-sm text-ink",
-              "shadow-[0_0_0_1px_rgba(42,24,16,0.08)] active:scale-[0.96]",
+              "shadow-[0_0_0_1px_rgba(42,24,16,0.08)] touch-manipulation active:scale-[0.96]",
               emoji ? "min-w-9 px-0 text-base" : "px-2.5",
             )}
           >

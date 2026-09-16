@@ -10,7 +10,36 @@ const APP_NAME = "通靈少根筋";
 function PwaBoot() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
-    void navigator.serviceWorker.register("/sw.js");
+    const ios =
+      /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    let cancelled = false;
+    const boot = async () => {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      const controlled = Boolean(navigator.serviceWorker.controller);
+      await Promise.all(regs.map((r) => r.unregister()));
+      if (cancelled) return;
+      if (controlled) {
+        try {
+          if (!sessionStorage.getItem("psi-sw-reset")) {
+            sessionStorage.setItem("psi-sw-reset", "1");
+            window.location.reload();
+            return;
+          }
+        } catch {
+          /* private mode */
+        }
+      }
+      if (ios) return;
+      window.setTimeout(() => {
+        if (!cancelled) void navigator.serviceWorker.register("/sw.js");
+      }, 4000);
+    };
+    void boot();
+    return () => {
+      cancelled = true;
+    };
   }, []);
   return null;
 }
