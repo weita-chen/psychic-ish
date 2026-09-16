@@ -1,4 +1,5 @@
 import { CharacterAvatar } from "./character-avatar";
+import { ReactionChip } from "./reaction-bar";
 import { COPY } from "@/lib/game/copy";
 import type { PublicPlayer, RoundTitles } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
@@ -86,12 +87,15 @@ export function PlayerRoster({
               </span>
             )}
             {showScores && (
-              <div className="text-right">
-                {showTurnScore && p.turnScore != null && (
-                  <div className="text-xs text-muted tabular-nums">+{p.turnScore}</div>
-                )}
-                <div className="font-display text-lg font-semibold tabular-nums leading-none">
-                  {p.totalScore}
+              <div className="flex items-center gap-2">
+                {p.reaction && <ReactionChip value={p.reaction} />}
+                <div className="text-right">
+                  {showTurnScore && p.turnScore != null && (
+                    <div className="text-xs text-muted tabular-nums">+{p.turnScore}</div>
+                  )}
+                  <div className="font-display text-lg font-semibold tabular-nums leading-none">
+                    {p.totalScore}
+                  </div>
                 </div>
               </div>
             )}

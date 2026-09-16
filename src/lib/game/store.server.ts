@@ -53,6 +53,9 @@ function parseState(raw: RoomState | string): RoomState {
   const state = (typeof raw === "string" ? JSON.parse(raw) : raw) as RoomState;
   if (!Array.isArray(state.roundHistory)) state.roundHistory = [];
   if (!Array.isArray(state.deckIds) || state.deckIds.length === 0) state.deckIds = ["a"];
+  if (state.currentTurn && (!state.currentTurn.reactions || typeof state.currentTurn.reactions !== "object")) {
+    state.currentTurn.reactions = {};
+  }
   for (const p of state.players) {
     if (typeof p.devoteeRoundScore !== "number") p.devoteeRoundScore = 0;
   }

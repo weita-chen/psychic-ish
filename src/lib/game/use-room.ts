@@ -9,6 +9,7 @@ import {
   moveNeedle,
   playAgain,
   sendNudge,
+  setReaction,
   settleDuo,
   startGame,
   submitClue,
@@ -240,6 +241,26 @@ export function useRoom(session: Session | null) {
       s && run(() => advanceReveal({ data: { roomCode: s.roomCode, token: s.token } })),
     nudge: () =>
       s && run(() => sendNudge({ data: { roomCode: s.roomCode, token: s.token } })),
+    react: (reaction: string) => {
+      if (!s) return;
+      setView((cur) => {
+        if (!cur) return cur;
+        return {
+          ...cur,
+          you: { ...cur.you, canReact: false, yourReaction: reaction },
+          players: cur.players.map((p) =>
+            p.playerId === cur.you.playerId ? { ...p, reaction } : p,
+          ),
+        };
+      });
+      return setReaction({
+        data: { roomCode: s.roomCode, token: s.token, reaction },
+      })
+        .then(apply)
+        .catch(() => {
+          setError(COPY.network);
+        });
+    },
     leave: () =>
       s && run(() => leaveRoom({ data: { roomCode: s.roomCode, token: s.token } })),
     attachSession: (next: Session) => {

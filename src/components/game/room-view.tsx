@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { CharacterPicker } from "./character-avatar";
 import { DeckPicker } from "./deck-picker";
 import { PlayerRoster } from "./player-roster";
+import { ReactionBar } from "./reaction-bar";
 import { RulesButton } from "./rules-dialog";
 import { Spectrum } from "./spectrum";
 import { Button } from "@/components/ui/button";
@@ -430,6 +431,9 @@ function Reveal({ view, room }: { view: ClientView; room: RoomApi }) {
           averagePosition={view.phase === "revealCountdown" ? null : view.averagePosition}
           countdownLabel={countLabel}
         />
+      )}
+      {view.phase === "reveal" && view.you.canReact && (
+        <ReactionBar onPick={(value) => void room.react(value)} />
       )}
       {view.phase === "reveal" && view.mode === "duo" && (
         <div className="mt-auto grid grid-cols-2 gap-2">

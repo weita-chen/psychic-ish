@@ -1,6 +1,7 @@
 import { COPY } from "./copy";
 import { isCharacterId } from "./characters";
 import { ALL_CARDS, enabledCardIdsFor, parseDeckIds, sanitizeDeckIds } from "./decks";
+import { isReaction } from "./reactions";
 import { clamp01, randomTargetCenter, scoreNeedle } from "./scoring";
 import {
   DEFAULT_NEEDLE,
@@ -285,6 +286,7 @@ function startTurn(state: RoomState, now: number): void {
     turnScores: {},
     averagePosition: null,
     lastCardId: cardId,
+    reactions: {},
   };
   state.phase = "awaitClue";
   state.interstitialEndsAt = null;
@@ -574,6 +576,25 @@ export function advanceAfterReveal(state: RoomState, actorId: string, now: numbe
   startNextTurn(state, now);
 }
 
+export function setReaction(state: RoomState, actorId: string, raw: string, now: number): void {
+  if (state.phase !== "reveal" || !state.currentTurn?.revealed) {
+    throw new GameError("phase", COPY.invalidAction);
+  }
+  const actor = state.players.find((p) => p.playerId === actorId);
+  if (!actor || !isActive(actor, now)) {
+    throw new GameError("phase", COPY.invalidAction);
+  }
+  if (actorId === state.currentTurn.devoteeId) {
+    throw new GameError("forbidden", COPY.invalidAction);
+  }
+  if (!isReaction(raw)) {
+    throw new GameError("phase", COPY.invalidAction);
+  }
+  if (!state.currentTurn.reactions) state.currentTurn.reactions = {};
+  if (state.currentTurn.reactions[actorId]) return;
+  state.currentTurn.reactions[actorId] = raw;
+}
+
 export function nudge(state: RoomState, actorId: string, now: number): void {
   if (state.phase !== "guessing" && state.phase !== "awaitClue") {
     throw new GameError("phase", COPY.invalidAction);
@@ -733,6 +754,10 @@ export function toClientView(
     hasBeenDevoteeThisRound: p.hasBeenDevoteeThisRound,
     colorIndex: p.colorIndex,
     turnScore: revealed && turn ? (turn.turnScores[p.playerId] ?? null) : null,
+    reaction:
+      revealed && turn && state.phase !== "roundResults" && state.phase !== "finalResults"
+        ? (turn.reactions?.[p.playerId] ?? null)
+        : null,
   }));
 
   const hostPresent = state.players.some(
@@ -749,6 +774,13 @@ export function toClientView(
       isHost: viewerId === state.hostPlayerId,
       isDevotee,
       isChanneler: isChanneler && !isDevotee,
+      canReact:
+        state.phase === "reveal" &&
+        Boolean(turn?.revealed) &&
+        isChanneler &&
+        !isDevotee &&
+        !turn?.reactions?.[viewerId],
+      yourReaction: turn?.reactions?.[viewerId] ?? null,
     },
     hostPlayerId: state.hostPlayerId,
     hostPresent,

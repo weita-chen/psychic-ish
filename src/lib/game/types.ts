@@ -61,6 +61,7 @@ export type CurrentTurn = {
   turnScores: Record<string, number>;
   averagePosition: number | null;
   lastCardId: string | null;
+  reactions: Record<string, string>;
 };
 
 export type TurnRecapGuess = {
@@ -118,6 +119,7 @@ export type PublicPlayer = {
   hasBeenDevoteeThisRound: boolean;
   colorIndex: number;
   turnScore: number | null;
+  reaction: string | null;
 };
 
 export type PublicCard = {
@@ -150,6 +152,8 @@ export type ClientView = {
     isHost: boolean;
     isDevotee: boolean;
     isChanneler: boolean;
+    canReact: boolean;
+    yourReaction: string | null;
   };
   hostPlayerId: string;
   hostPresent: boolean;

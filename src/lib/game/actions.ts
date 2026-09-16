@@ -152,6 +152,16 @@ export const advanceReveal = createServerFn({ method: "POST" })
     });
   });
 
+export const setReaction = createServerFn({ method: "POST" })
+  .validator(z.object({ ...tokenFields, reaction: z.string().min(1).max(8) }))
+  .handler(async ({ data }): Promise<ActionResult> => {
+    const { mutateRoom } = await import("./store.server");
+    const { setReaction: apply } = await import("./engine.server");
+    return mutateRoom(data.roomCode, { token: data.token }, ({ state, playerId, now }) => {
+      apply(state, playerId, data.reaction, now);
+    });
+  });
+
 export const sendNudge = createServerFn({ method: "POST" })
   .validator(z.object(tokenFields))
   .handler(async ({ data }): Promise<ActionResult> => {
