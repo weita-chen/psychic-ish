@@ -533,11 +533,18 @@ function RoundResults({ view, room }: { view: ClientView; room: RoomApi }) {
             {COPY.titleFraudHint}
           </li>
           {view.mode === "party" && (
-            <li>
-              <strong className="text-ink">{COPY.bestDevotee}</strong>
-              {" · "}
-              {COPY.titleBestDevoteeHint}
-            </li>
+            <>
+              <li>
+                <strong className="text-ink">{COPY.bestDevotee}</strong>
+                {" · "}
+                {COPY.titleBestDevoteeHint}
+              </li>
+              <li>
+                <strong className="text-ink">{COPY.worstDevotee}</strong>
+                {" · "}
+                {COPY.titleWorstDevoteeHint}
+              </li>
+            </>
           )}
         </ul>
       )}

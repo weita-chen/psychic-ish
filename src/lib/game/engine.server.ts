@@ -653,21 +653,25 @@ function titlesFor(state: RoomState, now: number): ClientView["titles"] {
     return a.joinedAt - b.joinedAt;
   });
   if (ranked.length < 2) return null;
-  let bestDevoteeId: string | null = null;
+  let bestDevoteeIds: string[] = [];
+  let worstDevoteeIds: string[] = [];
   if (state.mode === "party") {
-    const byDevotee = [...ranked].sort((a, b) => {
-      const da = a.devoteeRoundScore ?? 0;
-      const db = b.devoteeRoundScore ?? 0;
-      if (db !== da) return db - da;
-      return a.joinedAt - b.joinedAt;
-    });
-    const top = byDevotee[0];
-    if (top && (top.devoteeRoundScore ?? 0) > 0) bestDevoteeId = top.playerId;
+    const scores = ranked.map((p) => p.devoteeRoundScore ?? 0);
+    const max = Math.max(...scores);
+    const min = Math.min(...scores);
+    if (max > 0) {
+      bestDevoteeIds = ranked.filter((p) => (p.devoteeRoundScore ?? 0) === max).map((p) => p.playerId);
+    }
+    if (min < max) {
+      worstDevoteeIds = ranked.filter((p) => (p.devoteeRoundScore ?? 0) === min).map((p) => p.playerId);
+    }
   }
   return {
     masterId: ranked[0]!.playerId,
     fraudId: ranked[ranked.length - 1]!.playerId,
-    bestDevoteeId,
+    bestDevoteeId: bestDevoteeIds[0] ?? null,
+    bestDevoteeIds,
+    worstDevoteeIds,
   };
 }
 

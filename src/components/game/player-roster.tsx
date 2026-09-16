@@ -25,7 +25,10 @@ export function PlayerRoster({
       {visible.map((p) => {
         const badges: string[] = [];
         if (titles?.masterId === p.playerId) badges.push(COPY.master);
-        if (titles?.bestDevoteeId === p.playerId) badges.push(COPY.bestDevotee);
+        if (titles?.bestDevoteeIds?.includes(p.playerId) || titles?.bestDevoteeId === p.playerId) {
+          badges.push(COPY.bestDevotee);
+        }
+        if (titles?.worstDevoteeIds?.includes(p.playerId)) badges.push(COPY.worstDevotee);
         if (titles?.fraudId === p.playerId) badges.push(COPY.lastPlace);
         return (
           <li

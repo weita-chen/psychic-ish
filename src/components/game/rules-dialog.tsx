@@ -66,7 +66,7 @@ export function RulesDialog({ open, onClose }: { open: boolean; onClose: () => v
           <ul className="space-y-2 rounded-[16px] bg-surface p-4 text-sm">
             <li>
               <strong>3–8 人：</strong>信眾得到所有通靈者該局分數的加總。每人當完一輪信眾後，由壇主選擇繼續問事或結算總分。繼續則再輪一輪。結算時最高分是
-              {COPY.master}，最低分是{COPY.lastPlace}。
+              {COPY.master}，最低分是{COPY.lastPlace}。當信眾提示最好的是{COPY.bestDevotee}，最差的是{COPY.worstDevotee}。
             </li>
             <li>
               <strong>2 人：</strong>兩人輪流當信眾，規則同上。若這題通靈者有得分，信眾也得 1 分；沒人得分則信眾 0 分。遊戲直到有人按「

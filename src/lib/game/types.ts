@@ -139,6 +139,8 @@ export type RoundTitles = {
   masterId: string;
   fraudId: string;
   bestDevoteeId: string | null;
+  bestDevoteeIds: string[];
+  worstDevoteeIds: string[];
 };
 
 export type ClientView = {
