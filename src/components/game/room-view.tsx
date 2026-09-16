@@ -460,14 +460,22 @@ function Reveal({ view, room }: { view: ClientView; room: RoomApi }) {
         </div>
       )}
       {view.phase === "reveal" && view.mode === "party" && !view.cycleChoice && (
-        <Button className="mt-auto w-full" onClick={() => void room.advance()}>
-          {COPY.skipWait}
-        </Button>
+        view.you.isHost ? (
+          <Button className="mt-auto w-full" disabled={room.busy} onClick={() => void room.advance()}>
+            {COPY.skipWait}
+          </Button>
+        ) : (
+          <p className="mt-auto text-center text-sm text-muted">{COPY.hostWaitContinue}</p>
+        )
       )}
       {view.phase === "interstitial" && (
-        <Button variant="secondary" className="mt-auto w-full" onClick={() => void room.advance()}>
-          {COPY.skipWait}
-        </Button>
+        view.you.isHost ? (
+          <Button className="mt-auto w-full" disabled={room.busy} onClick={() => void room.advance()}>
+            {COPY.skipWait}
+          </Button>
+        ) : (
+          <p className="mt-auto text-center text-sm text-muted">{COPY.hostWaitContinue}</p>
+        )
       )}
       <PlayerRoster players={view.players} showScores />
     </>

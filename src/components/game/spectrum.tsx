@@ -163,12 +163,10 @@ export function Spectrum({
         )}
 
         {needles?.map((n) => (
-          <NeedleMark
+          <NeedleStem
             key={n.playerId}
             t={n.position}
             color={NEEDLE_INK[n.colorIndex % NEEDLE_INK.length]!}
-            label={n.nickname}
-            score={n.score}
           />
         ))}
 
@@ -215,6 +213,7 @@ export function Spectrum({
           </div>
         )}
       </div>
+      {needles && needles.length > 0 && <NeedleLabels needles={needles} />}
     </div>
   );
 }
@@ -255,30 +254,62 @@ function BandScoreMarks({ targetCenter }: { targetCenter: number }) {
   );
 }
 
-function NeedleMark({
-  t,
-  color,
-  label,
-  score,
-}: {
-  t: number;
-  color: string;
-  label: string;
-  score: number;
-}) {
+function NeedleStem({ t, color }: { t: number; color: string }) {
   return (
     <div
-      className="pointer-events-none absolute top-0 z-10 h-full -translate-x-1/2"
-      style={{ left: tToPct(t) }}
+      className="pointer-events-none absolute top-1 bottom-1 z-10 w-0.5 -translate-x-1/2 rounded-full"
+      style={{ left: tToPct(t), backgroundColor: color }}
+    />
+  );
+}
+
+function labelRows(needles: RevealedNeedle[]): number[] {
+  const order = needles
+    .map((_, i) => i)
+    .sort((a, b) => needles[a]!.position - needles[b]!.position);
+  const row = needles.map(() => 0);
+  const thresh = 0.18;
+  for (let k = 0; k < order.length; k += 1) {
+    const i = order[k]!;
+    let r = 0;
+    for (;;) {
+      const clash = order
+        .slice(0, k)
+        .some(
+          (j) => row[j] === r && Math.abs(needles[i]!.position - needles[j]!.position) < thresh,
+        );
+      if (!clash) {
+        row[i] = r;
+        break;
+      }
+      r += 1;
+    }
+  }
+  return row;
+}
+
+function NeedleLabels({ needles }: { needles: RevealedNeedle[] }) {
+  const rows = labelRows(needles);
+  const maxRow = Math.max(0, ...rows);
+  return (
+    <div
+      className="relative mt-2"
+      style={{ minHeight: `${(maxRow + 1) * 1.55}rem` }}
     >
-      <div
-        className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-medium text-primary-fg"
-        style={{ backgroundColor: color }}
-      >
-        {label}
-        <span className="ml-1 tabular-nums opacity-80">{score}</span>
-      </div>
-      <div className="absolute left-1/2 top-6 h-[calc(100%-1.5rem)] w-0.5 -translate-x-1/2" style={{ backgroundColor: color }} />
+      {needles.map((n, i) => (
+        <div
+          key={n.playerId}
+          className="pointer-events-none absolute left-0 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-medium text-primary-fg"
+          style={{
+            left: tToPct(n.position),
+            top: `${rows[i]! * 1.5}rem`,
+            backgroundColor: NEEDLE_INK[n.colorIndex % NEEDLE_INK.length],
+          }}
+        >
+          {n.nickname}
+          <span className="ml-1 tabular-nums opacity-80">{n.score}</span>
+        </div>
+      ))}
     </div>
   );
 }

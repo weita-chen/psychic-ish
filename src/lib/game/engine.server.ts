@@ -211,18 +211,7 @@ export function tick(state: RoomState, now: number): void {
   if (state.phase === "reveal" && state.mode === "party") {
     if (partyRoundComplete(state, now)) {
       state.interstitialEndsAt = null;
-    } else {
-      const ends = state.interstitialEndsAt ?? 0;
-      if (ends && now >= ends) {
-        state.phase = "interstitial";
-        state.interstitialEndsAt = now + INTERSTITIAL_MS;
-      }
     }
-  }
-
-  if (state.phase === "interstitial") {
-    const ends = state.interstitialEndsAt ?? 0;
-    if (now >= ends) startNextTurn(state, now);
   }
 
   if (
@@ -399,9 +388,7 @@ function performReveal(state: RoomState, now: number): void {
     devoteeScore,
   });
   state.phase = "reveal";
-  if (state.mode === "party") {
-    state.interstitialEndsAt = partyRoundComplete(state, now) ? null : now + 7000;
-  }
+  state.interstitialEndsAt = null;
 }
 
 function partyRoundComplete(state: RoomState, now: number): boolean {
@@ -567,8 +554,11 @@ export function playAgain(state: RoomState, actorId: string, now: number): void 
   startTurn(state, now);
 }
 
-export function skipInterstitial(state: RoomState, now: number): void {
+export function skipInterstitial(state: RoomState, actorId: string, now: number): void {
   if (state.phase !== "interstitial") return;
+  if (actorId !== state.hostPlayerId) {
+    throw new GameError("forbidden", COPY.invalidAction);
+  }
   startNextTurn(state, now);
 }
 
@@ -578,8 +568,10 @@ export function advanceAfterReveal(state: RoomState, actorId: string, now: numbe
   const actor = state.players.find((p) => p.playerId === actorId);
   if (!actor || !isActive(actor, now)) return;
   if (partyRoundComplete(state, now)) return;
-  state.phase = "interstitial";
-  state.interstitialEndsAt = now + INTERSTITIAL_MS;
+  if (actorId !== state.hostPlayerId) {
+    throw new GameError("forbidden", COPY.invalidAction);
+  }
+  startNextTurn(state, now);
 }
 
 export function nudge(state: RoomState, actorId: string, now: number): void {

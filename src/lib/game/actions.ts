@@ -147,7 +147,7 @@ export const advanceReveal = createServerFn({ method: "POST" })
     const { mutateRoom } = await import("./store.server");
     const { advanceAfterReveal, skipInterstitial } = await import("./engine.server");
     return mutateRoom(data.roomCode, { token: data.token }, ({ state, playerId, now }) => {
-      if (state.phase === "interstitial") skipInterstitial(state, now);
+      if (state.phase === "interstitial") skipInterstitial(state, playerId, now);
       else advanceAfterReveal(state, playerId, now);
     });
   });
